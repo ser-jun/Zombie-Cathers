@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 4390596508436442731}
   - component: {fileID: 6870306500012238913}
   - component: {fileID: -3323523254946631099}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Brain (1) (1)
-  m_TagString: Ground
+  m_TagString: Brain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

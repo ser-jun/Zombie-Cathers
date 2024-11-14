@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -28,10 +27,13 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Transform dropPosition;
     private Inventory inventory;
-
+    public GameObject gunObject;
     [SerializeField] Gun currentGun;
 
-   
+    [SerializeField] private TileGeneration tileGeneration;
+
+
+
     #endregion
 
     void Start()
@@ -47,7 +49,8 @@ public class Player : MonoBehaviour
         MovePlayerAndCamera();
         CheckPositionPlayer();
         DropObject();
-      
+        ChooseWeapon();
+
     }
     private void DropObject()
     {
@@ -55,21 +58,29 @@ public class Player : MonoBehaviour
         {
             GameObject objectToDrop = inventory.listOfObjects[inventory.listOfObjects.Count - 1];
             inventory.listOfObjects.Remove(objectToDrop);
-            GameObject dropObject = Instantiate(objectToDrop,dropPosition.position, Quaternion.identity);
+            GameObject dropObject = Instantiate(objectToDrop, dropPosition.position, Quaternion.identity);
             dropObject.SetActive(true);
-            Destroy(dropObject,8f);
+            Destroy(dropObject, 8f);
+            
+                if (objectToDrop.CompareTag("Brain"))
+                {
+                    tileGeneration.CheckAndSpawnZombie(dropObject.transform.position);
+     
+                }
+         
+            
             CheckCountBrains(objectToDrop);
         }
-      
+
     }
     async private void CheckCountBrains(GameObject obj)
     {
-            while (inventory.listOfObjects.Count != 3)
-            {
-                await Task.Delay(3000);
-                inventory.listOfObjects.Add(obj);
-                
-            }   
+        while (inventory.listOfObjects.Count != 3)
+        {
+            await Task.Delay(3000);
+            inventory.listOfObjects.Add(obj);
+
+        }
     }
 
     private void MovePlayerAndCamera()
@@ -98,7 +109,7 @@ public class Player : MonoBehaviour
             transform.localScale = scale;
             if (currentGun != null)
             {
-                currentGun.transform.localScale = new Vector3(scale.x,scale.x,scale.z);
+                currentGun.transform.localScale = new Vector3(scale.x, scale.x, scale.z);
             }
         }
 
@@ -137,8 +148,18 @@ public class Player : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(Vector2.up * maxJumpForce, ForceMode2D.Impulse);
         }
-        
+
     }
 
-   
+    private void ChooseWeapon()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            gunObject.SetActive(false);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        { 
+            gunObject.SetActive(true); 
+        }
+    }
 }

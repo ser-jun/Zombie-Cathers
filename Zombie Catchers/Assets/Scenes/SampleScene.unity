@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 133001990}
   - component: {fileID: 133001992}
   - component: {fileID: 133001991}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: TilemapSpawnZombies
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -491,7 +491,7 @@ GameObject:
   - component: {fileID: 368613025}
   - component: {fileID: 368613027}
   - component: {fileID: 368613026}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: TilemapBush
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1534,7 +1534,9 @@ MonoBehaviour:
     m_Bits: 64
   groundCheckDistance: 1.2
   dropPosition: {fileID: 292139157}
+  gunObject: {fileID: 1090292870}
   currentGun: {fileID: 1090292872}
+  tileGeneration: {fileID: 1814443417}
 --- !u!4 &660050559 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -7552582706839291426, guid: 5c56d2da6c7f83b4c872827597538a98, type: 3}
@@ -1929,7 +1931,7 @@ GameObject:
   m_Component:
   - component: {fileID: 944751686}
   - component: {fileID: 944751685}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9120,6 +9122,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Aim
       objectReference: {fileID: 0}
+    - target: {fileID: -8653719598885068355, guid: 939631142d87abf4a85c63a0e698f0a2, type: 3}
+      propertyPath: m_TagString
+      value: Target
+      objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: 939631142d87abf4a85c63a0e698f0a2, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.6323
@@ -9187,6 +9193,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 939631142d87abf4a85c63a0e698f0a2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1509887209}
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 939631142d87abf4a85c63a0e698f0a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1509887210}
   m_SourcePrefab: {fileID: 4843985084834002234, guid: 939631142d87abf4a85c63a0e698f0a2, type: 3}
 --- !u!1 &1448070352
 GameObject:
@@ -9373,6 +9382,51 @@ MonoBehaviour:
   playerTransform: {fileID: 660050559}
   maxDistance: 6
   minDistance: 1.6
+--- !u!61 &1509887210
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509887207}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.5, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.1, y: 100}
+  m_EdgeRadius: 0
 --- !u!1 &1548195181
 GameObject:
   m_ObjectHideFlags: 0
@@ -9768,20 +9822,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   random: {fileID: 8389206261872961084, guid: 387c6d663ccfd704abd4735ee9c045bb, type: 3}
-  maxObjectCount: 5
+  zombie: {fileID: 788544680636292025, guid: f2d2b9c64fe40ae438a36cba252bc321, type: 3}
+  maxObjectCount: 10
+  radiusSpawnZombie: 5
   vectors:
-  - {x: -4.3, y: -1}
+  - {x: -4, y: -1}
   - {x: -3, y: -1}
-  - {x: 8.4, y: -0.1}
+  - {x: 8.5, y: 0}
   - {x: 29.2, y: 4}
-  - {x: 30.2, y: 4}
+  - {x: 30, y: 4}
   - {x: 31.5, y: 4}
-  - {x: 46, y: 0.05}
-  - {x: 47.05, y: 0.05}
-  - {x: 52.1, y: 2}
-  - {x: 53.4, y: 2}
-  - {x: 54.6, y: 2}
-  - {x: 61.44, y: -0.03}
+  - {x: 45.8, y: 0}
+  - {x: 47, y: 0}
+  - {x: 51.2, y: 2}
+  - {x: 53.2, y: 2}
+  - {x: 54.5, y: 2}
+  - {x: 61.5, y: 0}
+  player: {fileID: 660050559}
+  brain: {fileID: 7274939146307269183, guid: 60ccc569f70d6ee4aac8373ae37ea7d6, type: 3}
 --- !u!4 &1814443418
 Transform:
   m_ObjectHideFlags: 0
@@ -9791,7 +9849,7 @@ Transform:
   m_GameObject: {fileID: 1814443416}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 61.444, y: -0.033, z: 0.05457437}
+  m_LocalPosition: {x: 61.7, y: -0.5, z: 0.05457437}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

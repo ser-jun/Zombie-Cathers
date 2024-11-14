@@ -32,10 +32,7 @@ public class Shot : MonoBehaviour
         Rigidbody2D rb2D = bullet.GetComponent<Rigidbody2D>();
 
         rb2D.velocity = direction * speedBullet;
-        if (bullet.GetComponent<Rigidbody2D>().position==(Vector2)aimTransform.position)
-        {
-            Destroy(bullet);
-        }
+     
        
     }
 }

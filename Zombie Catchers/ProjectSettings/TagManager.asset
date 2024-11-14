@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - Target
+  - Brain
+  - spawnPlace
+  - Zombie
   layers:
   - Default
   - TransparentFX
@@ -13,8 +17,8 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
+  - Brain
+  - spawnPlace
   - 
   - 
   - 
