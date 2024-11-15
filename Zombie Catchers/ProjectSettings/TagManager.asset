@@ -9,6 +9,7 @@ TagManager:
   - Brain
   - spawnPlace
   - Zombie
+  - Bullet
   layers:
   - Default
   - TransparentFX

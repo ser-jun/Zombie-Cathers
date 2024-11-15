@@ -61,13 +61,9 @@ public class Player : MonoBehaviour
             GameObject dropObject = Instantiate(objectToDrop, dropPosition.position, Quaternion.identity);
             dropObject.SetActive(true);
             Destroy(dropObject, 8f);
+            tileGeneration.spawnedBrains.Add(dropObject);
             
-                if (objectToDrop.CompareTag("Brain"))
-                {
-                    tileGeneration.CheckAndSpawnZombie(dropObject.transform.position);
-     
-                }
-         
+             
             
             CheckCountBrains(objectToDrop);
         }
@@ -86,14 +82,9 @@ public class Player : MonoBehaviour
     private void MovePlayerAndCamera()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
-
-
-        //Debug.Log("Is Grounded: " + isGrounded);        
-
-
         float dir = Input.GetAxisRaw("Horizontal");
         animator.SetBool("isMoving", Mathf.Abs(dir) > 0);
-        //Debug.Log("dd" + dir);
+      
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
@@ -103,7 +94,6 @@ public class Player : MonoBehaviour
         if (dir != 0)
         {
 
-
             Vector3 scale = transform.localScale;
             scale.x = dir > 0 ? 1f : -1f;
             transform.localScale = scale;
@@ -112,7 +102,6 @@ public class Player : MonoBehaviour
                 currentGun.transform.localScale = new Vector3(scale.x, scale.x, scale.z);
             }
         }
-
 
         rb.velocity = new Vector2(dir * moveSpeed, rb.velocity.y);
 
