@@ -6,12 +6,6 @@ public class Gun : MonoBehaviour
 {
     [SerializeField] float rotateShift;
   
-    void Start()
-    {
-        
-    }
-
-
     void Update()
     {
    

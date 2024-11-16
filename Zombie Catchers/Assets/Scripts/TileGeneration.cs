@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -18,11 +17,11 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Transform leftPoint;
     [SerializeField] private Transform rightPoint;
- private List<GameObject> spawnObject = new List<GameObject>();
+    private List<GameObject> spawnObject = new List<GameObject>();
 
     [SerializeField] private GameObject brain;
-   
 
+    private float maxDistacneToplayer = 3f;
     public List<GameObject> spawnedBrains = new List<GameObject>();
     void Start()
     {
@@ -32,12 +31,12 @@ public class TileGeneration : MonoBehaviour
     }
     void Update()
     {
-        
+
         BrainsHendler();
     }
     void BrainsHendler()
     {
-        for (int i = 0;i<spawnedBrains.Count;i++)
+        for (int i = 0; i < spawnedBrains.Count; i++)
         {
             if (spawnedBrains[i] == null)
             {
@@ -46,7 +45,7 @@ public class TileGeneration : MonoBehaviour
             else
             {
 
-                CheckAndSpawnZombie(spawnedBrains[i].transform.position);
+                CheckAndSpawnZombie(spawnedBrains[i].transform);
             }
         }
     }
@@ -57,48 +56,65 @@ public class TileGeneration : MonoBehaviour
         while (objectCount < maxObjectCount)
         {
             Vector2 randomPosition = vectors[Random.Range(0, vectors.Length)];
-           GameObject spawn= Instantiate(random, randomPosition, Quaternion.identity);
-           spawnObject.Add(spawn);
+            GameObject spawn = Instantiate(random, randomPosition, Quaternion.identity);
+            spawnObject.Add(spawn);
             objectCount++;
         }
     }
-   public void CheckAndSpawnZombie(Vector3 brainPosition)
+    private void CheckAndSpawnZombie(Transform brainTransform)
     {
         foreach (Vector2 spawn in vectors)
         {
-            float distanceToBrain = Vector2.Distance(spawn, brainPosition);
-            
-                if (distanceToBrain <= radiusSpawnZombie && CheckPositionPlayer(brainPosition))
-                {
-                    Collider2D spawnPlaceCollider = Physics2D.OverlapCircle(spawn, radiusForSearchSpawnPlace, LayerMask.GetMask("spawnPlace"));
-                    if (spawnPlaceCollider != null && spawnPlaceCollider.CompareTag("spawnPlace"))
-                    {
-                   
-                        
-                      GameObject zombieObj =  Instantiate(zombiePref, spawn, Quaternion.identity);
-                    Zombie zombie = zombieObj.GetComponent<Zombie>();
+            float distanceToBrain = Vector2.Distance(spawn, brainTransform.position);
 
-                    zombie.target = CheckClosesPoint(zombie);
+            if (distanceToBrain <= radiusSpawnZombie && CheckPositionPlayer(brainTransform.position))
+            {
+                Collider2D spawnPlaceCollider = Physics2D.OverlapCircle(spawn, radiusForSearchSpawnPlace, LayerMask.GetMask("spawnPlace"));
+                if (spawnPlaceCollider != null && spawnPlaceCollider.CompareTag("spawnPlace"))
+                {
+
+
+                    GameObject zombieObj = Instantiate(zombiePref, spawn, Quaternion.identity);
+                    Zombie zombie = zombieObj.GetComponent<Zombie>();
+                    zombie.brainTransform = brainTransform;
+                    zombie.target = CheckingPlayerInRadius(zombie);
                     RemoveObject();
-                      
-                        
-                    }
-                    
-               }
-            
+
+
+                }
+
+            }
+
         }
     }
     private Transform CheckClosesPoint(Zombie zombie)
     {
-        float distanceToLeft = Vector2.Distance(zombie.transform.position, leftPoint.position);
-        float distanceToRight= Vector2.Distance(zombie.transform.position, rightPoint.position);
-        if (distanceToLeft <= distanceToRight) { return leftPoint; }
-        else { return rightPoint; }
-       
+        
+        
+            float distanceToLeft = Vector2.Distance(zombie.transform.position, leftPoint.position);
+            float distanceToRight = Vector2.Distance(zombie.transform.position, rightPoint.position);
+            return distanceToLeft <= distanceToRight ? leftPoint : rightPoint;
+      
     }
-   private void RemoveObject()
+    public Transform CheckingPlayerInRadius(Zombie zombie) // нужно перенести в метод зомби 
     {
-        for (int i = 0;i<spawnObject.Count;i++)
+        float distanceToPlayer = Vector2.Distance(zombie.transform.position, player.position);
+        if (distanceToPlayer < maxDistacneToplayer)
+        {
+
+
+            bool isFacingRight = zombie.transform.localScale.x > 0;
+            if (isFacingRight)
+            {
+                return leftPoint;
+            }
+            else { return rightPoint; }
+        }
+        return CheckClosesPoint(zombie);
+    }
+    private void RemoveObject()
+    {
+        for (int i = 0; i < spawnObject.Count; i++)
         {
             GameObject spawn = spawnObject[i];
             Collider2D brainCollider = Physics2D.OverlapCircle(spawn.transform.position, 2f, LayerMask.GetMask("Brain"));
@@ -108,12 +124,12 @@ public class TileGeneration : MonoBehaviour
                 Destroy(spawn);
             }
         }
-        
+
     }
 
     private bool CheckPositionPlayer(Vector2 brainPosition)
     {
-        return Vector2.Distance(player.position, brainPosition) > 10;
+        return Vector2.Distance(player.position, brainPosition) > 5;
 
     }
 
