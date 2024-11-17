@@ -285,9 +285,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c0d6c8c8e750e4a8b7b6228a33f420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
+  player: {fileID: 0}
+  leftTarget: {fileID: 0}
+  rightTarget: {fileID: 0}
   brainTransform: {fileID: 0}
-  zombie: {fileID: 4017610502633941819}
+  maxDistacneToPlayer: 3
   jumpForce: 5
   groundLayer:
     serializedVersion: 2

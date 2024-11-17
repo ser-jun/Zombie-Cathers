@@ -1,13 +1,12 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using System.Collections;
 
 public class Zombie : MonoBehaviour
 {
     #region variables
     private Animator animator;
     private bool isDead = false;
-    private bool isEating= true;
+    private bool isEating = true;
     private bool isGrounted = true;
     private bool isObstacle = false;
     private bool isGroundUnderLegs = false;
@@ -15,15 +14,19 @@ public class Zombie : MonoBehaviour
     private Rigidbody2D rb;
     private CapsuleCollider2D capsuleCollider;
     public Transform target;
+    public Transform player;
+    public Transform leftTarget;
+    public Transform rightTarget;   
     private float moveSpeed = 2f;
     public Transform brainTransform;
-    //private TileGeneration tileGeneration;
+    [SerializeField] float maxDistacneToPlayer; 
 
-    //[SerializeField] private Zombie zombie;
-    [SerializeField] private float jumpForce = 1.5f; 
-    [SerializeField] private LayerMask groundLayer; 
+    [SerializeField] private float jumpForce = 1.5f;
+    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float distanceToObstacle = 1f;
     [SerializeField] private float distanceToGround = 1f;
+
+    bool isLookedPlayer;
     #endregion
     private void Start()
     {
@@ -33,17 +36,52 @@ public class Zombie : MonoBehaviour
     }
     private void Update()
     {
-        if (!isDead )
+        if (!isDead)
         {
-            
-            EatingBrain();  
+
+            EatingBrain();
         }
         if (!isDead && !isEating)
         {
+            Transform tryTarget = CheckingPlayerInRadius();
+            if (tryTarget != null) { target = tryTarget; }
             MoveZombie(target);
-          
+
         }
 
+    }
+    private Transform CheckClosesPoint()
+    {
+
+
+        float distanceToLeft = Vector2.Distance(transform.position, leftTarget.position);
+        float distanceToRight = Vector2.Distance(transform.position, rightTarget.position);
+        return distanceToLeft <= distanceToRight ? leftTarget : rightTarget;
+
+    }
+    public Transform CheckingPlayerInRadius()
+    {
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        if (distanceToPlayer < maxDistacneToPlayer)
+        {
+
+            isLookedPlayer = true;
+            bool isFacingRight = transform.position.x - player.position.x < 0;
+            if (isFacingRight)
+            {
+                return leftTarget;
+            }
+            else { return rightTarget; }
+        }
+        if (!isLookedPlayer)
+        {
+
+            return CheckClosesPoint();
+        }
+        else
+        {
+            return null;
+        }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -53,11 +91,30 @@ public class Zombie : MonoBehaviour
             {
                 animator.SetTrigger("Dead");
                 Destroy(collision.gameObject);
+                CountKilledZombies.Instance.IncrementKillCount();
                 rb.freezeRotation = false;
                 capsuleCollider.size = new Vector2(0.3f, 1f);
                 isDead = true;
+                FadeDestroy();
             }
         }
+    }
+    private IEnumerator FadeDestroy()
+    {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            Color color = spriteRenderer.color;
+            float fadeTime = 1.5f;
+            float fadeSpeed = 1 / fadeTime;
+            while (color.a > 0)
+            {
+                color.a -= Time.deltaTime * fadeSpeed;
+                spriteRenderer.color = color;
+                yield return null;
+            }
+        }
+        Destroy(gameObject);
     }
     private void MoveZombie(Transform target)
     {
@@ -113,7 +170,7 @@ public class Zombie : MonoBehaviour
         {
             isEating = false; return;
         }
-        if (Vector3.Distance(transform.position, brainTransform.position)>1)
+        if (Vector3.Distance(transform.position, brainTransform.position) > 1)
         {
             MoveZombie(brainTransform);
         }
@@ -123,5 +180,5 @@ public class Zombie : MonoBehaviour
             animator.SetBool("isMoving", false);
         }
     }
-   
+
 }

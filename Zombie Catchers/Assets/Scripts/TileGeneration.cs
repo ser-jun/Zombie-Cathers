@@ -18,15 +18,17 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] private Transform leftPoint;
     [SerializeField] private Transform rightPoint;
     private List<GameObject> spawnObject = new List<GameObject>();
+    Transform[] pointToRun;
 
     [SerializeField] private GameObject brain;
 
-    private float maxDistacneToplayer = 3f;
+    
     public List<GameObject> spawnedBrains = new List<GameObject>();
     void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
+        pointToRun = new Transform[2] { leftPoint, rightPoint };
         Generate();
     }
     void Update()
@@ -51,7 +53,7 @@ public class TileGeneration : MonoBehaviour
     }
     void Generate()
     {
-        objectCount = Random.Range(3, maxObjectCount);
+        objectCount = Random.Range(4, maxObjectCount);
 
         while (objectCount < maxObjectCount)
         {
@@ -77,7 +79,9 @@ public class TileGeneration : MonoBehaviour
                     GameObject zombieObj = Instantiate(zombiePref, spawn, Quaternion.identity);
                     Zombie zombie = zombieObj.GetComponent<Zombie>();
                     zombie.brainTransform = brainTransform;
-                    zombie.target = CheckingPlayerInRadius(zombie);
+                    zombie.player = player;
+                    zombie.leftTarget = leftPoint;
+                    zombie.rightTarget = rightPoint;
                     RemoveObject();
 
 
@@ -87,31 +91,7 @@ public class TileGeneration : MonoBehaviour
 
         }
     }
-    private Transform CheckClosesPoint(Zombie zombie)
-    {
-        
-        
-            float distanceToLeft = Vector2.Distance(zombie.transform.position, leftPoint.position);
-            float distanceToRight = Vector2.Distance(zombie.transform.position, rightPoint.position);
-            return distanceToLeft <= distanceToRight ? leftPoint : rightPoint;
-      
-    }
-    public Transform CheckingPlayerInRadius(Zombie zombie) // нужно перенести в метод зомби 
-    {
-        float distanceToPlayer = Vector2.Distance(zombie.transform.position, player.position);
-        if (distanceToPlayer < maxDistacneToplayer)
-        {
-
-
-            bool isFacingRight = zombie.transform.localScale.x > 0;
-            if (isFacingRight)
-            {
-                return leftPoint;
-            }
-            else { return rightPoint; }
-        }
-        return CheckClosesPoint(zombie);
-    }
+   
     private void RemoveObject()
     {
         for (int i = 0; i < spawnObject.Count; i++)

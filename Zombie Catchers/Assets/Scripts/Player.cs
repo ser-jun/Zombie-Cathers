@@ -32,6 +32,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private TileGeneration tileGeneration;
 
+    public GameObject airplane;
+    private bool isOnAirplane = true;
 
 
     #endregion
@@ -41,16 +43,25 @@ public class Player : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         rb = gameObject.GetComponent<Rigidbody2D>();
         inventory = gameObject.GetComponent<Inventory>();
+        transform.position = airplane.transform.position;
     }
 
     void Update()
     {
+        if (!isOnAirplane)
+        {
+            FollowAirplane();
+        }
 
         MovePlayerAndCamera();
         CheckPositionPlayer();
         DropObject();
         ChooseWeapon();
 
+    }
+    private void FollowAirplane()
+    {
+        transform.position = airplane.transform.position+new Vector3 (0,1,0);
     }
     private void DropObject()
     {
