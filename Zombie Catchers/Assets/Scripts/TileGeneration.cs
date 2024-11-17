@@ -54,13 +54,13 @@ public class TileGeneration : MonoBehaviour
     void Generate()
     {
         objectCount = Random.Range(4, maxObjectCount);
-
-        while (objectCount < maxObjectCount)
+        
+        while (objectCount > 0)
         {
             Vector2 randomPosition = vectors[Random.Range(0, vectors.Length)];
             GameObject spawn = Instantiate(random, randomPosition, Quaternion.identity);
             spawnObject.Add(spawn);
-            objectCount++;
+            objectCount--;
         }
     }
     private void CheckAndSpawnZombie(Transform brainTransform)

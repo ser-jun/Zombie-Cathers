@@ -10,11 +10,12 @@ public class Shot : MonoBehaviour
 
     private float shootTime = 3f;
     private float nextShoot = 0f;
-
+    AimController aimController;
     // Start is called before the first frame update
     void Start()
     {
-
+        aimController = FindObjectOfType<AimController>();
+        aimTransform= aimController.transform;
     }
 
     // Update is called once per frame

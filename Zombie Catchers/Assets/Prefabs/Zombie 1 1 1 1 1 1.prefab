@@ -285,7 +285,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c0d6c8c8e750e4a8b7b6228a33f420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  target: {fileID: 0}
+  player: {fileID: 7050851015522952826, guid: 6caa50dfbdd22c94282382ea76009a92, type: 3}
   leftTarget: {fileID: 0}
   rightTarget: {fileID: 0}
   brainTransform: {fileID: 0}

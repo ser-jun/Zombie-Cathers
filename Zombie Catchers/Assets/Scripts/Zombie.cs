@@ -95,27 +95,11 @@ public class Zombie : MonoBehaviour
                 rb.freezeRotation = false;
                 capsuleCollider.size = new Vector2(0.3f, 1f);
                 isDead = true;
-                FadeDestroy();
+                
             }
         }
     }
-    private IEnumerator FadeDestroy()
-    {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            Color color = spriteRenderer.color;
-            float fadeTime = 1.5f;
-            float fadeSpeed = 1 / fadeTime;
-            while (color.a > 0)
-            {
-                color.a -= Time.deltaTime * fadeSpeed;
-                spriteRenderer.color = color;
-                yield return null;
-            }
-        }
-        Destroy(gameObject);
-    }
+    
     private void MoveZombie(Transform target)
     {
 

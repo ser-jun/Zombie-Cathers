@@ -33,25 +33,32 @@ public class Player : MonoBehaviour
     [SerializeField] private TileGeneration tileGeneration;
 
     public GameObject airplane;
-    private bool isOnAirplane = true;
+    SpawnPlayerAndPlain spawnPlayerAndAirPlain;
+    AimController aimController;
+    
 
+   
 
     #endregion
 
     void Start()
     {
+        tileGeneration = FindObjectOfType<TileGeneration>();
+        dropPosition = aimController.transform;
+
+        cameraTransform=Camera.main.transform;
         animator = gameObject.GetComponent<Animator>();
         rb = gameObject.GetComponent<Rigidbody2D>();
         inventory = gameObject.GetComponent<Inventory>();
-        transform.position = airplane.transform.position;
+      
     }
 
     void Update()
     {
-        if (!isOnAirplane)
-        {
-            FollowAirplane();
-        }
+        //if (!isOnAirplane)
+        //{
+        //    FollowAirplane();
+        //}
 
         MovePlayerAndCamera();
         CheckPositionPlayer();
@@ -59,10 +66,18 @@ public class Player : MonoBehaviour
         ChooseWeapon();
 
     }
-    private void FollowAirplane()
+
+    //private void FollowAirplane()
+    //{
+    //    transform.position = airplane.transform.position+new Vector3 (0,1,0);
+    //}
+    public void SetAimController(AimController aim)
     {
-        transform.position = airplane.transform.position+new Vector3 (0,1,0);
+
+        aimController = aim;
+        dropPosition = aim.transform;
     }
+   
     private void DropObject()
     {
         if (inventory.listOfObjects.Count > 0 && Input.GetKeyDown(KeyCode.Q))
