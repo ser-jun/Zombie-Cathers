@@ -12,10 +12,13 @@ public class Shot : MonoBehaviour
     private float nextShoot = 0f;
     AimController aimController;
     // Start is called before the first frame update
+    Player player;
     void Start()
     {
         aimController = FindObjectOfType<AimController>();
         aimTransform= aimController.transform;
+        player = aimController.GetComponent<Player>();
+        
     }
 
     // Update is called once per frame

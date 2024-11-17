@@ -35,7 +35,7 @@ public class SpawnPlayerAndPlain : MonoBehaviour
             aimController.playerTransform = playerInstance.transform; 
         }
 
-        playerInstance.transform.SetParent(airplanePrefab.transform);
+      
 
         isSpawned = true;
     }

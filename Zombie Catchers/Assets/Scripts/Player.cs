@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     private Animator animator;
 
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
     private bool isGrounded;
 
 
@@ -64,7 +64,20 @@ public class Player : MonoBehaviour
 
     }
 
-   
+    private void FixedUpdate()
+    {
+        HandleCamera();
+    }
+    void HandleCamera()
+    {
+        borderX = Mathf.Lerp(cameraTransform.position.x, transform.position.x, cameraSpeed * Time.fixedDeltaTime);
+        borderX = Mathf.Clamp(borderX, minPositionCamera, maxPositionCamera);
+        cameraTransform.position = new Vector3(
+            borderX,
+            Mathf.Lerp(cameraTransform.position.y, transform.position.y, cameraSpeed * Time.fixedDeltaTime),
+            cameraTransform.position.z
+        );
+    }
     public void SetAimController(AimController aim)
     {
 
@@ -126,13 +139,7 @@ public class Player : MonoBehaviour
         rb.velocity = new Vector2(dir * moveSpeed, rb.velocity.y);
 
 
-        borderX = Mathf.Lerp(cameraTransform.position.x, transform.position.x, cameraSpeed * Time.deltaTime);
-        borderX = Mathf.Clamp(borderX, minPositionCamera, maxPositionCamera);
-        cameraTransform.position = new Vector3(
-            borderX,
-            Mathf.Lerp(cameraTransform.position.y, transform.position.y, cameraSpeed * Time.deltaTime),
-            cameraTransform.position.z
-        );
+        
     }
     private void OnDrawGizmosSelected()
     {
