@@ -14,7 +14,7 @@ public class Zombie : MonoBehaviour
     private Rigidbody2D rb;
     private CapsuleCollider2D capsuleCollider;
     public Transform target;
-    public Transform player;
+    public Transform playerTransform;
     public Transform leftTarget;
     public Transform rightTarget;   
     private float moveSpeed = 2f;
@@ -25,11 +25,13 @@ public class Zombie : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float distanceToObstacle = 1f;
     [SerializeField] private float distanceToGround = 1f;
-
+    Player player;
     bool isLookedPlayer;
     #endregion
     private void Start()
     {
+        player = FindObjectOfType<Player>();
+        playerTransform = player.transform;
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
@@ -61,12 +63,12 @@ public class Zombie : MonoBehaviour
     }
     public Transform CheckingPlayerInRadius()
     {
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
         if (distanceToPlayer < maxDistacneToPlayer)
         {
 
             isLookedPlayer = true;
-            bool isFacingRight = transform.position.x - player.position.x < 0;
+            bool isFacingRight = transform.position.x - playerTransform.position.x < 0;
             if (isFacingRight)
             {
                 return leftTarget;

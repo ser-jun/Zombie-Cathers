@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
     [SerializeField] private TileGeneration tileGeneration;
 
     public GameObject airplane;
-    SpawnPlayerAndPlain spawnPlayerAndAirPlain;
+ 
     AimController aimController;
     
 
@@ -55,10 +55,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        //if (!isOnAirplane)
-        //{
-        //    FollowAirplane();
-        //}
+       
 
         MovePlayerAndCamera();
         CheckPositionPlayer();
@@ -67,10 +64,7 @@ public class Player : MonoBehaviour
 
     }
 
-    //private void FollowAirplane()
-    //{
-    //    transform.position = airplane.transform.position+new Vector3 (0,1,0);
-    //}
+   
     public void SetAimController(AimController aim)
     {
 

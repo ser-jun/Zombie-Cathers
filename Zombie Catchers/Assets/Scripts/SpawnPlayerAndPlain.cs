@@ -8,8 +8,8 @@ public class SpawnPlayerAndPlain : MonoBehaviour
    [SerializeField] public GameObject airplanePrefab;
     public AimController aimController;
 
-    private Vector2 spawnPosition = new Vector2(-26.54f, 4.2f);
-    private Vector2 positionForSpawn = new Vector2(-28f, 4.7f);
+    private Vector2 spawnPositionPlayer = new Vector2(-22.3f, 4.7f);
+    private Vector2 positionForSpawnAirplain = new Vector2(-23.9f, 4.7f);
     public bool isSpawned = false;
 
     void Start()
@@ -26,7 +26,7 @@ public class SpawnPlayerAndPlain : MonoBehaviour
     }
     private void SpawnPlayer()
     {
-        GameObject playerInstance = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+        GameObject playerInstance = Instantiate(playerPrefab, spawnPositionPlayer, Quaternion.identity);
 
         Player playerScript = playerInstance.GetComponent<Player>();
         if (playerScript != null && aimController != null)
@@ -41,6 +41,6 @@ public class SpawnPlayerAndPlain : MonoBehaviour
     }
     private void SpawnAirplane()
     {
-        airplanePrefab = Instantiate(airplanePrefab, positionForSpawn, Quaternion.identity);
+        airplanePrefab = Instantiate(airplanePrefab, positionForSpawnAirplain, Quaternion.identity);
     }
 }

@@ -79,7 +79,7 @@ public class TileGeneration : MonoBehaviour
                     GameObject zombieObj = Instantiate(zombiePref, spawn, Quaternion.identity);
                     Zombie zombie = zombieObj.GetComponent<Zombie>();
                     zombie.brainTransform = brainTransform;
-                    zombie.player = player;
+                    zombie.playerTransform = player;
                     zombie.leftTarget = leftPoint;
                     zombie.rightTarget = rightPoint;
                     RemoveObject();
