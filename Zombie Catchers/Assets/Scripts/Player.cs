@@ -35,9 +35,6 @@ public class Player : MonoBehaviour
     public GameObject airplane;
  
     AimController aimController;
-    
-
-   
 
     #endregion
 
@@ -50,7 +47,8 @@ public class Player : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         rb = gameObject.GetComponent<Rigidbody2D>();
         inventory = gameObject.GetComponent<Inventory>();
-      
+     
+
     }
 
     void Update()
@@ -61,6 +59,7 @@ public class Player : MonoBehaviour
         CheckPositionPlayer();
         DropObject();
         ChooseWeapon();
+    
 
     }
 
@@ -68,6 +67,7 @@ public class Player : MonoBehaviour
     {
         HandleCamera();
     }
+   
     void HandleCamera()
     {
         borderX = Mathf.Lerp(cameraTransform.position.x, transform.position.x, cameraSpeed * Time.fixedDeltaTime);
@@ -117,7 +117,7 @@ public class Player : MonoBehaviour
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
         float dir = Input.GetAxisRaw("Horizontal");
         animator.SetBool("isMoving", Mathf.Abs(dir) > 0);
-      
+
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
@@ -137,6 +137,7 @@ public class Player : MonoBehaviour
         }
 
         rb.velocity = new Vector2(dir * moveSpeed, rb.velocity.y);
+      
     }
     private void OnDrawGizmosSelected()
     {

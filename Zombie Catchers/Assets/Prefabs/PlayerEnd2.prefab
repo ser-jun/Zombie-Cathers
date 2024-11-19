@@ -799,14 +799,14 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 576
+  rb: {fileID: 0}
   groundCheckDistance: 1.2
   dropPosition: {fileID: 0}
   gunObject: {fileID: 590950992401392629}
   currentGun: {fileID: 4445251957646735533}
   tileGeneration: {fileID: 0}
-  airplane: {fileID: 5385224159939949098, guid: ad2abf70ea30a4148846597fc3add29e, type: 3}
-  playerPrefab: {fileID: 8147502591634963993}
-  airplanePrefab: {fileID: 5385224159939949098, guid: ad2abf70ea30a4148846597fc3add29e, type: 3}
+  airplane: {fileID: 0}
+  airplaneAnimator: {fileID: 0}
 --- !u!114 &7583771196756764462
 MonoBehaviour:
   m_ObjectHideFlags: 0

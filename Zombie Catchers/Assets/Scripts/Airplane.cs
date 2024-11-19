@@ -18,6 +18,11 @@ public class Airplane : MonoBehaviour
     private bool isScaling = false;
     private Vector3 targetPositionOffset;
 
+    private Animator animator;
+    public LayerMask groundLayer; 
+    private float checkDistance = 3f; 
+    private float upSpeed = 2f;
+
 
     void Start()
     {
@@ -27,6 +32,7 @@ public class Airplane : MonoBehaviour
         originalScale = airplanePrefab.transform.localScale;
         targetScale = originalScale * 0.5f;
         targetPositionOffset = airplanePrefab.transform.position + new Vector3(0, -2f, 0);
+        animator = GetComponent<Animator>();
         AttachedPlayerToAirplain();
     }
 
@@ -41,6 +47,7 @@ public class Airplane : MonoBehaviour
             else
             {
                 rb.velocity = Vector2.zero;
+                animator.SetBool("isMoving", false);
             }
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -51,13 +58,40 @@ public class Airplane : MonoBehaviour
         {
             FollowThePlayer();
             DecreasePlain();
-           
         }
+        CheckGround();
+        if (Mathf.Abs(rb.velocity.x) > 0.1f || Mathf.Abs(rb.velocity.y) > 0.1f)  
+        {
+            animator.SetBool("isMoving", true); 
+        }
+        else
+        {
+            animator.SetBool("isMoving", false); 
+        }
+        
+    }
+    private void CheckGround()
+    {
+      
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + Vector3.right * 1.5f, Vector2.down, checkDistance, groundLayer);
+
+        if (hit.collider != null)
+        {
+          
+            rb.velocity += new Vector2(0, upSpeed);
+        }
+    }
+    private void OnDrawGizmos()
+    {
+      
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position + Vector3.right * 1.5f, transform.position + Vector3.right * 1.5f + Vector3.down * checkDistance);
     }
     private void MoveAirplane()
     {
         Vector3 moveDirection = new Vector3(moveSpeed, moveOnY, 0);
         rb.velocity = moveDirection;
+        animator.SetBool("isMoving", Mathf.Abs(moveSpeed) > 0);
 
 
     }
@@ -65,22 +99,20 @@ public class Airplane : MonoBehaviour
     {
         if (isScaling)
         {
-            // Уменьшение масштаба
+
             airplanePrefab.transform.localScale = Vector3.Lerp(airplanePrefab.transform.localScale, targetScale, Time.deltaTime * scaleSpeed);
 
-            // Вычисление направления вниз
             Vector3 directionToTarget = (targetPositionOffset - airplanePrefab.transform.position).normalized;
 
-            // Установка скорости на Rigidbody2D
             rb.velocity = new Vector2(0, directionToTarget.y * scaleSpeed);
 
-            // Проверка завершения уменьшения масштаба и положения
+
             if (Vector3.Distance(airplanePrefab.transform.localScale, targetScale) < 0.01f &&
                 Vector3.Distance(airplanePrefab.transform.position, targetPositionOffset) < 0.01f)
             {
                 airplanePrefab.transform.localScale = targetScale;
                 airplanePrefab.transform.position = targetPositionOffset;
-                rb.velocity = Vector2.zero; // Остановка движения
+                rb.velocity = Vector2.zero;
                 isScaling = false;
             }
         }
@@ -91,6 +123,7 @@ public class Airplane : MonoBehaviour
         Vector3 targetPosition = new Vector3(player.transform.position.x, fixedY, 0);
         Vector3 directionToTarget = (targetPosition - airplanePrefab.transform.position).normalized;
         rb.velocity = new Vector3(directionToTarget.x * moveSpeed, 0, 0);
+
     }
     private void AttachedPlayerToAirplain()
     {
