@@ -104,8 +104,6 @@ public class Zombie : MonoBehaviour
     
     private void MoveZombie(Transform target)
     {
-
-        //target = tileGeneration.CheckingPlayerInRadius(zombie);
         Vector2 direction = (target.position - transform.position).normalized;
         DrawRaycast(direction);
         WalkingAndJumpCondition(direction);

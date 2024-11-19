@@ -9,7 +9,7 @@ public class SpawnPlayerAndPlain : MonoBehaviour
     public AimController aimController;
 
     private Vector2 spawnPositionPlayer = new Vector2(-22.3f, 4.7f);
-    private Vector2 positionForSpawnAirplain = new Vector2(-23.9f, 4.7f);
+    private Vector2 positionForSpawnAirplain = new Vector2(-22.9f, 5f);
     public bool isSpawned = false;
 
     void Start()

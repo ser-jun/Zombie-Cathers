@@ -57,7 +57,7 @@ public class Player : MonoBehaviour
     {
        
 
-        MovePlayerAndCamera();
+        MovePlayer();
         CheckPositionPlayer();
         DropObject();
         ChooseWeapon();
@@ -112,7 +112,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void MovePlayerAndCamera()
+    private void MovePlayer()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
         float dir = Input.GetAxisRaw("Horizontal");
@@ -137,9 +137,6 @@ public class Player : MonoBehaviour
         }
 
         rb.velocity = new Vector2(dir * moveSpeed, rb.velocity.y);
-
-
-        
     }
     private void OnDrawGizmosSelected()
     {
