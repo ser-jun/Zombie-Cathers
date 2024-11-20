@@ -9,19 +9,23 @@ public class Airplane : MonoBehaviour
     private Rigidbody2D rb;
     Player player;
     private bool isPlayerAttached = true;
-    private float targetX = -10f; 
+    private float targetX = -10f;
     private float stopThreshold = 0.1f;
 
     private Vector3 originalScale;
     private Vector3 targetScale;
-    private float scaleSpeed = 2f; 
+    private float scaleSpeed = 2f;
     private bool isScaling = false;
     private Vector3 targetPositionOffset;
 
     private Animator animator;
-    public LayerMask groundLayer; 
-    private float checkDistance = 3f; 
+    public LayerMask groundLayer;
+    private float checkDistance = 3f;
     private float upSpeed = 2f;
+    private float downSpeed = 1f;
+
+    private float currentVelocityX = 0f;  
+    private float inertiaSmoothTime = 0.3f;
 
 
     void Start()
@@ -60,30 +64,37 @@ public class Airplane : MonoBehaviour
             DecreasePlain();
         }
         CheckGround();
-        if (Mathf.Abs(rb.velocity.x) > 0.1f || Mathf.Abs(rb.velocity.y) > 0.1f)  
+        if (Mathf.Abs(rb.velocity.x) > 0.1f || Mathf.Abs(rb.velocity.y) > 0.1f)
         {
-            animator.SetBool("isMoving", true); 
+            animator.SetBool("isMoving", true);
         }
         else
         {
-            animator.SetBool("isMoving", false); 
+            animator.SetBool("isMoving", false);
         }
-        
+
     }
     private void CheckGround()
     {
-      
         RaycastHit2D hit = Physics2D.Raycast(transform.position + Vector3.right * 1.5f, Vector2.down, checkDistance, groundLayer);
 
-        if (hit.collider != null)
+        if (hit.collider)
         {
-          
-            rb.velocity += new Vector2(0, upSpeed);
+            float distanceToGround = hit.distance;
+            if (distanceToGround > 2.5f)
+            {
+                rb.velocity += new Vector2(0, upSpeed * Time.deltaTime);
+            }
+        }
+        else
+        {
+
+            rb.velocity -= new Vector2(0, downSpeed * Time.deltaTime);
         }
     }
     private void OnDrawGizmos()
     {
-      
+
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position + Vector3.right * 1.5f, transform.position + Vector3.right * 1.5f + Vector3.down * checkDistance);
     }
@@ -118,13 +129,15 @@ public class Airplane : MonoBehaviour
         }
     }
 
-    private void FollowThePlayer ()
+    private void FollowThePlayer()
     {
-        Vector3 targetPosition = new Vector3(player.transform.position.x, fixedY, 0);
-        Vector3 directionToTarget = (targetPosition - airplanePrefab.transform.position).normalized;
-        rb.velocity = new Vector3(directionToTarget.x * moveSpeed, 0, 0);
+        float targetVelocityX = player.transform.position.x - transform.position.x;
 
+        currentVelocityX = Mathf.SmoothDamp(currentVelocityX, targetVelocityX * moveSpeed, ref inertiaSmoothTime, 0.3f);
+        rb.velocity = new Vector2(currentVelocityX, rb.velocity.y);
+        animator.SetBool("isMoving", Mathf.Abs(currentVelocityX) > 0.1f);
     }
+
     private void AttachedPlayerToAirplain()
     {
         player.transform.SetParent(airplanePrefab.transform);
@@ -133,7 +146,7 @@ public class Airplane : MonoBehaviour
         isPlayerAttached = true;
 
     }
-    private void UnattachPlayer()   
+    private void UnattachPlayer()
     {
         player.transform.SetParent(null);
         player.rb.gravityScale = 1;
