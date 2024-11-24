@@ -5,7 +5,6 @@ public class Airplane : MonoBehaviour
     public GameObject airplanePrefab;
     private float moveSpeed = 4f;
     private float moveOnY = 0.5f;
-    private float fixedY = 7f;
     private Rigidbody2D rb;
     Player player;
     private bool isPlayerAttached = true;
@@ -22,17 +21,17 @@ public class Airplane : MonoBehaviour
     public LayerMask groundLayer;
     private float checkDistance = 3f;
     private float upSpeed = 2f;
-    private float downSpeed = 1f;
+    [SerializeField] float flightHeigth;
 
-    private float currentVelocityX = 0f;  
-    private float inertiaSmoothTime = 0.3f;
+    private bool isMoving = true;
+
+
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         player = FindObjectOfType<Player>();
-        fixedY = airplanePrefab.transform.position.y;
         originalScale = airplanePrefab.transform.localScale;
         targetScale = originalScale * 0.5f;
         targetPositionOffset = airplanePrefab.transform.position + new Vector3(0, -2f, 0);
@@ -42,17 +41,14 @@ public class Airplane : MonoBehaviour
 
     void Update()
     {
+        animator.SetBool("isMoving", isMoving);
         if (isPlayerAttached)
         {
             if (Mathf.Abs(airplanePrefab.transform.position.x - targetX) > stopThreshold)
             {
                 MoveAirplane();
             }
-            else
-            {
-                rb.velocity = Vector2.zero;
-                animator.SetBool("isMoving", false);
-            }
+          
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 UnattachPlayer();
@@ -61,37 +57,10 @@ public class Airplane : MonoBehaviour
         else
         {
             FollowThePlayer();
-            DecreasePlain();
-        }
-        CheckGround();
-        if (Mathf.Abs(rb.velocity.x) > 0.1f || Mathf.Abs(rb.velocity.y) > 0.1f)
-        {
-            animator.SetBool("isMoving", true);
-        }
-        else
-        {
-            animator.SetBool("isMoving", false);
-        }
-
-    }
-    private void CheckGround()
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position + Vector3.right * 1.5f, Vector2.down, checkDistance, groundLayer);
-
-        if (hit.collider)
-        {
-            float distanceToGround = hit.distance;
-            if (distanceToGround > 2.5f)
-            {
-                rb.velocity += new Vector2(0, upSpeed * Time.deltaTime);
-            }
-        }
-        else
-        {
-
-            rb.velocity -= new Vector2(0, downSpeed * Time.deltaTime);
+            ScaleAirplain();
         }
     }
+
     private void OnDrawGizmos()
     {
 
@@ -100,13 +69,13 @@ public class Airplane : MonoBehaviour
     }
     private void MoveAirplane()
     {
+        Vector3 previousPosition = transform.position;
         Vector3 moveDirection = new Vector3(moveSpeed, moveOnY, 0);
-        rb.velocity = moveDirection;
-        animator.SetBool("isMoving", Mathf.Abs(moveSpeed) > 0);
-
-
+        transform.position += moveDirection * Time.deltaTime;
+        isMoving = Vector3.Distance(transform.position, previousPosition) > 0.01f;
     }
-    private void DecreasePlain()
+
+    private void ScaleAirplain()
     {
         if (isScaling)
         {
@@ -131,11 +100,11 @@ public class Airplane : MonoBehaviour
 
     private void FollowThePlayer()
     {
-        float targetVelocityX = player.transform.position.x - transform.position.x;
-
-        currentVelocityX = Mathf.SmoothDamp(currentVelocityX, targetVelocityX * moveSpeed, ref inertiaSmoothTime, 0.3f);
-        rb.velocity = new Vector2(currentVelocityX, rb.velocity.y);
-        animator.SetBool("isMoving", Mathf.Abs(currentVelocityX) > 0.1f);
+        Vector3 previousPosition = transform.position;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + (Vector3.up * 100), Vector2.down, Mathf.Infinity, groundLayer);
+        transform.position = new Vector3(Mathf.Lerp(transform.position.x, player.transform.position.x, upSpeed * Time.deltaTime),
+            Mathf.Lerp(transform.position.y, hit.point.y + flightHeigth, upSpeed * Time.deltaTime), transform.position.z);
+        isMoving = Vector3.Distance(transform.position, previousPosition) > 0.01f;
     }
 
     private void AttachedPlayerToAirplain()
@@ -152,6 +121,7 @@ public class Airplane : MonoBehaviour
         player.rb.gravityScale = 1;
         player.rb.isKinematic = false;
         isPlayerAttached = false;
+        GetComponent<BoxCollider2D>().enabled = false;
         isScaling = true;
         targetPositionOffset = airplanePrefab.transform.position + new Vector3(0, -3f, 0);
     }
