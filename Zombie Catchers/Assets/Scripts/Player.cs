@@ -35,20 +35,21 @@ public class Player : MonoBehaviour
     public GameObject airplane;
  
     AimController aimController;
+    public bool isWeaponhand = true;
 
     #endregion
-
-    void Start()
+    private void Awake()
     {
-        tileGeneration = FindObjectOfType<TileGeneration>();
-        dropPosition = aimController.transform;
-
-        cameraTransform=Camera.main.transform;
+        cameraTransform = Camera.main.transform;
         animator = gameObject.GetComponent<Animator>();
         rb = gameObject.GetComponent<Rigidbody2D>();
         inventory = gameObject.GetComponent<Inventory>();
-     
+        tileGeneration = FindObjectOfType<TileGeneration>();
+    }
 
+    void Start()
+    {
+        dropPosition = aimController.transform;
     }
 
     void Update()
@@ -169,10 +170,12 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
+            isWeaponhand = false;
             gunObject.SetActive(false);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         { 
+            isWeaponhand = true;
             gunObject.SetActive(true); 
         }
     }

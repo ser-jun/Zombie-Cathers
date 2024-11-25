@@ -48,6 +48,10 @@ public class Airplane : MonoBehaviour
             {
                 MoveAirplane();
             }
+            else
+            {
+                isMoving = false;
+            }
           
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -72,7 +76,7 @@ public class Airplane : MonoBehaviour
         Vector3 previousPosition = transform.position;
         Vector3 moveDirection = new Vector3(moveSpeed, moveOnY, 0);
         transform.position += moveDirection * Time.deltaTime;
-        isMoving = Vector3.Distance(transform.position, previousPosition) > 0.01f;
+        isMoving = Vector3.Distance(transform.position, previousPosition) > 0.001f;
     }
 
     private void ScaleAirplain()
@@ -104,13 +108,14 @@ public class Airplane : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(transform.position + (Vector3.up * 100), Vector2.down, Mathf.Infinity, groundLayer);
         transform.position = new Vector3(Mathf.Lerp(transform.position.x, player.transform.position.x, upSpeed * Time.deltaTime),
             Mathf.Lerp(transform.position.y, hit.point.y + flightHeigth, upSpeed * Time.deltaTime), transform.position.z);
-        isMoving = Vector3.Distance(transform.position, previousPosition) > 0.01f;
+        isMoving = Vector3.Distance(transform.position, previousPosition) > 0.001f;
     }
 
     private void AttachedPlayerToAirplain()
     {
         player.transform.SetParent(airplanePrefab.transform);
         player.rb.isKinematic = true;
+        player.rb.constraints = RigidbodyConstraints2D.FreezeAll;
         player.rb.gravityScale = 0;
         isPlayerAttached = true;
 
@@ -120,6 +125,7 @@ public class Airplane : MonoBehaviour
         player.transform.SetParent(null);
         player.rb.gravityScale = 1;
         player.rb.isKinematic = false;
+        player.rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         isPlayerAttached = false;
         GetComponent<BoxCollider2D>().enabled = false;
         isScaling = true;

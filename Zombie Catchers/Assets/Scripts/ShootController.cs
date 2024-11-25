@@ -11,20 +11,19 @@ public class Shot : MonoBehaviour
     private float shootTime = 3f;
     private float nextShoot = 0f;
     AimController aimController;
-    // Start is called before the first frame update
     Player player;
+
     void Start()
     {
         aimController = FindObjectOfType<AimController>();
         aimTransform= aimController.transform;
-        player = aimController.GetComponent<Player>();
+        player = GetComponent<Player>();
         
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && Time.time >= nextShoot)
+        if (Input.GetMouseButtonDown(0) && Time.time >= nextShoot && player.isWeaponhand)
         {
             Shoot();
             nextShoot = Time.time+shootTime;
