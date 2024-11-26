@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.U2D.IK;
 
 public class Player : MonoBehaviour
 {
@@ -27,7 +29,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Transform dropPosition;
     private Inventory inventory;
-    public GameObject gunObject;
+   // public GameObject gunObject;
     [SerializeField] Gun currentGun;
 
     [SerializeField] private TileGeneration tileGeneration;
@@ -35,8 +37,13 @@ public class Player : MonoBehaviour
     public GameObject airplane;
  
     AimController aimController;
+
+    [SerializeField] private List<GameObject> weapons = new List<GameObject>();
+    //private int currentWeaponIndex = 0;
     public bool isWeaponhand = true;
 
+    public LimbSolver2D hand1;
+    public CCDSolver2D hand2;
     #endregion
     private void Awake()
     {
@@ -166,17 +173,45 @@ public class Player : MonoBehaviour
 
     }
 
+    private void ChangeWeapon(int weaponIndex)
+    {
+
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            if (weapons[i] != null)
+            {
+                weapons[i].SetActive(i == weaponIndex);
+                SecureHandsToWeapon(weapons[i]);
+            }
+           
+        }
+    }
+    private void SecureHandsToWeapon(GameObject weapon)
+    {
+            Transform hand1Transform = weapon.transform.GetChild(0);
+            Transform hand2Transform = weapon.transform.GetChild(1);
+        var chain1 = hand1.GetChain(0);
+        chain1.effector = hand1Transform;
+        
+       var chain2 = hand2.GetChain(0);
+        chain2.effector = hand2Transform;
+
+    }
+
     private void ChooseWeapon()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            isWeaponhand = false;
-            gunObject.SetActive(false);
+            ChangeWeapon(0);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
-        { 
-            isWeaponhand = true;
-            gunObject.SetActive(true); 
+        {
+            ChangeWeapon(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            ChangeWeapon(2);
         }
     }
+
 }
