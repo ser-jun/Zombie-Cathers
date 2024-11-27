@@ -5,7 +5,9 @@ public class Zombie : MonoBehaviour
 {
     #region variables
     private Animator animator;
+
     private bool isDead = false;
+    public bool IsDead () => isDead;   
     private bool isEating = true;
     private bool isGrounted = true;
     private bool isObstacle = false;
@@ -52,6 +54,15 @@ public class Zombie : MonoBehaviour
         }
 
     }
+    public void Die()
+    {
+        isDead = true;
+        animator.SetTrigger("Dead");
+        CountKilledZombies.Instance.IncrementKillCount();
+        rb.freezeRotation = false;
+        capsuleCollider.size = new Vector2(0.3f, 1f);
+
+    }
     private Transform CheckClosesPoint()
     {
 
@@ -85,6 +96,14 @@ public class Zombie : MonoBehaviour
             return null;
         }
     }
+    private bool CheckPlayerWhileEating() // neeed fix distance
+    {
+        if (brainTransform == null) return false; 
+
+        float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
+        return distanceToPlayer < maxDistacneToPlayer; 
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Bullet"))
@@ -150,7 +169,7 @@ public class Zombie : MonoBehaviour
     }
     private void EatingBrain()
     {
-        if (brainTransform == null)
+        if (brainTransform == null || CheckPlayerWhileEating())
         {
             isEating = false; return;
         }

@@ -37,13 +37,19 @@ public class Player : MonoBehaviour
     public GameObject airplane;
  
     AimController aimController;
+    private float throwForce = 7f;
 
     [SerializeField] private List<GameObject> weapons = new List<GameObject>();
     //private int currentWeaponIndex = 0;
-    public bool isWeaponhand = true;
+    public bool isGun;
+    public bool isGarpun;
 
-    public LimbSolver2D hand1;
-    public CCDSolver2D hand2;
+    //public LimbSolver2D hand1;
+    //public CCDSolver2D hand2;
+    public Transform hand1;
+    public Transform hand2;
+    private Transform hand1Target; 
+    private Transform hand2Target;
     #endregion
     private void Awake()
     {
@@ -56,7 +62,8 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        dropPosition = aimController.transform;
+        //dropPosition = aimController.transform;
+        ChangeWeapon(0);
     }
 
     void Update()
@@ -66,11 +73,12 @@ public class Player : MonoBehaviour
         MovePlayer();
         CheckPositionPlayer();
         DropObject();
+        UpdateHandPositions();
         ChooseWeapon();
     
 
     }
-
+   
     private void FixedUpdate()
     {
         HandleCamera();
@@ -90,7 +98,7 @@ public class Player : MonoBehaviour
     {
 
         aimController = aim;
-        dropPosition = aim.transform;
+        //dropPosition = aim.transform;
     }
    
     private void DropObject()
@@ -100,9 +108,12 @@ public class Player : MonoBehaviour
             GameObject objectToDrop = inventory.listOfObjects[inventory.listOfObjects.Count - 1];
             inventory.listOfObjects.Remove(objectToDrop);
             GameObject dropObject = Instantiate(objectToDrop, dropPosition.position, Quaternion.identity);
+            Vector3 direction = (dropPosition.position - aimController.transform.position).normalized;
+            Rigidbody2D rb = dropObject.GetComponent<Rigidbody2D>();
+            rb.AddForce(-direction*throwForce, ForceMode2D.Impulse);
+            tileGeneration.spawnedBrains.Add(dropObject);
             dropObject.SetActive(true);
             Destroy(dropObject, 8f);
-            tileGeneration.spawnedBrains.Add(dropObject);
             
              
             
@@ -175,43 +186,49 @@ public class Player : MonoBehaviour
 
     private void ChangeWeapon(int weaponIndex)
     {
-
         for (int i = 0; i < weapons.Count; i++)
         {
             if (weapons[i] != null)
             {
                 weapons[i].SetActive(i == weaponIndex);
-                SecureHandsToWeapon(weapons[i]);
+
+                if (i == weaponIndex)
+                {
+                    hand1Target = weapons[i].transform.Find("Hand1Gun");
+                    hand2Target = weapons[i].transform.Find("Hand2Gun");
+                }
             }
-           
         }
     }
-    private void SecureHandsToWeapon(GameObject weapon)
+    private void UpdateHandPositions()
     {
-            Transform hand1Transform = weapon.transform.GetChild(0);
-            Transform hand2Transform = weapon.transform.GetChild(1);
-        var chain1 = hand1.GetChain(0);
-        chain1.effector = hand1Transform;
-        
-       var chain2 = hand2.GetChain(0);
-        chain2.effector = hand2Transform;
 
+        if (hand1Target != null)
+        {
+            hand1.position = hand1Target.position;
+        }
+
+        if (hand2Target != null)
+        {
+            hand2.position = hand2Target.position;
+        }
     }
 
     private void ChooseWeapon()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
+            isGun=true;
+            isGarpun=false;
             ChangeWeapon(0);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
+            isGarpun=true;
+            isGun=false;
             ChangeWeapon(1);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            ChangeWeapon(2);
-        }
+       
     }
 
 }

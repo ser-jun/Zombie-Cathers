@@ -9,12 +9,13 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] public GameObject random;
     [SerializeField] private GameObject zombiePref;
     [SerializeField] private int maxObjectCount = 10;
-    [SerializeField] private float radiusSpawnZombie = 5f;
-    float radiusForSearchSpawnPlace = 5f;
+    [SerializeField] private float radiusSpawnZombie = 2f;
+    float radiusForSearchSpawnPlace = 2f;
     [SerializeField] Vector2[] vectors;
     int objectCount = 0;
 
-    [SerializeField] private Transform player;
+    [SerializeField] private Player player;
+    
     [SerializeField] private Transform leftPoint;
     [SerializeField] private Transform rightPoint;
     private List<GameObject> spawnObject = new List<GameObject>();
@@ -29,6 +30,7 @@ public class TileGeneration : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
         pointToRun = new Transform[2] { leftPoint, rightPoint };
+        player = FindObjectOfType<Player>();
         Generate();
     }
     void Update()
@@ -69,17 +71,16 @@ public class TileGeneration : MonoBehaviour
         {
             float distanceToBrain = Vector2.Distance(spawn, brainTransform.position);
 
-            if (distanceToBrain <= radiusSpawnZombie && CheckPositionPlayer(brainTransform.position))
+            if (distanceToBrain <= radiusSpawnZombie && CheckPositionPlayer(spawn))
             {
                 Collider2D spawnPlaceCollider = Physics2D.OverlapCircle(spawn, radiusForSearchSpawnPlace, LayerMask.GetMask("spawnPlace"));
                 if (spawnPlaceCollider != null && spawnPlaceCollider.CompareTag("spawnPlace"))
                 {
 
-
                     GameObject zombieObj = Instantiate(zombiePref, spawn, Quaternion.identity);
                     Zombie zombie = zombieObj.GetComponent<Zombie>();
                     zombie.brainTransform = brainTransform;
-                    zombie.playerTransform = player;
+                    zombie.playerTransform = player.transform;
                     zombie.leftTarget = leftPoint;
                     zombie.rightTarget = rightPoint;
                     RemoveObject();
@@ -109,7 +110,7 @@ public class TileGeneration : MonoBehaviour
 
     private bool CheckPositionPlayer(Vector2 brainPosition)
     {
-        return Vector2.Distance(player.position, brainPosition) > 5;
+        return Vector2.Distance(player.transform.position, brainPosition) > 8f;
 
     }
 
