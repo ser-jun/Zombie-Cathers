@@ -13,7 +13,7 @@ public class CoinController : MonoBehaviour
     {
         coinsCount = GameObject.Find("CoinsCount").GetComponent<Text>();
          player =FindObjectOfType<Player>();
-        UpdateCoinsCountUI();
+        UpdateCoinsCountUI(coinsCount);
 
     }
 
@@ -38,15 +38,15 @@ public class CoinController : MonoBehaviour
             GameData data = SaveManager.Instance.LoadData();
             data.coins+=Random.Range(40,100);
             SaveManager.Instance.SaveData(data);
-            UpdateCoinsCountUI();
+            UpdateCoinsCountUI(coinsCount);
 
         }
     }
 
-    private void UpdateCoinsCountUI()
+    public void UpdateCoinsCountUI(Text coinsCountInText)
     {
         GameData data = SaveManager.Instance.LoadData();
-        coinsCount.text = data.coins.ToString();
+        coinsCountInText.text = data.coins.ToString();
     }
 
 }

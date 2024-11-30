@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,19 +22,25 @@ public class Searcher : MonoBehaviour
     public Button noButton;
     public Button yesButton;
     public Canvas canvasTimer;
+    public Text countCoinsText;
+
+
     void Start()
     {
         GenerateNewPosition();
         animator = GetComponent<Animator>();
-        playButton = FindObjectOfType<Button>();
+        playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         noButton.onClick.AddListener(ClosePanel);
         yesButton.onClick.AddListener(ClickYesButton);
+        GameObject saveManagerObject = new GameObject("SaveManager");
+        saveManagerObject.AddComponent<SaveManager>();
 
+        UpdateCoinUI();
     }
     void Update()
     {
 
-        if (searchTimer >=searchDuration)
+        if (searchTimer >= searchDuration)
         {
             StopSearching();
             return;
@@ -44,19 +49,29 @@ public class Searcher : MonoBehaviour
         {
             searchTimer += Time.deltaTime;
             UpdateTimer();
-        Move();
+            Move();
             if (isTimerRunning)
             {
-                
+
                 playButton.interactable = false;
             }
         }
+       
+    }
+    private void UpdateCoinUI()
+    {
+        GameData data = SaveManager.Instance.LoadData();
+        countCoinsText.text = data.coins.ToString();
     }
     private void ClickYesButton()
     {
         StopSearching();
-        panel.SetActive(false);    
-        
+        panel.SetActive(false);
+        GameData data = SaveManager.Instance.LoadData();
+        data.coins -= 1000; 
+        SaveManager.Instance.SaveData(data);
+        UpdateCoinUI();
+
     }
     private void ClosePanel()
     {
@@ -67,18 +82,18 @@ public class Searcher : MonoBehaviour
         panel.SetActive(true);
     }
     #region generatePosition
-    private float RandomGenerationXPosition ()
+    private float RandomGenerationXPosition()
     {
         return Random.Range(minXPosition, maxXPosition);
     }
-    private float RandomGenerationYPosition ()
+    private float RandomGenerationYPosition()
     {
         return Random.Range(minYPosition, maxYPosition);
     }
 
-   private void GenerateNewPosition()
+    private void GenerateNewPosition()
     {
-        targetPosition= new Vector3(RandomGenerationXPosition(), RandomGenerationYPosition(), transform.position.z);
+        targetPosition = new Vector3(RandomGenerationXPosition(), RandomGenerationYPosition(), transform.position.z);
     }
     #endregion
     private void Move()
@@ -94,7 +109,7 @@ public class Searcher : MonoBehaviour
         {
             Vector3 direction = (targetPosition - transform.position).normalized;
             transform.position += direction * moveSpeed * Time.deltaTime;
-            animator.SetBool("isMoved", true);  
+            animator.SetBool("isMoved", true);
         }
     }
     private IEnumerator SerchProcess()
@@ -103,31 +118,31 @@ public class Searcher : MonoBehaviour
         animator.SetBool("isMoved", false);
         yield return new WaitForSeconds(3f);
         GenerateNewPosition();
-        isPaused = false;   
+        isPaused = false;
     }
     private void StopSearching()
     {
-        isPaused=true;
+        isPaused = true;
         isTimerRunning = false;
         playButton.interactable = true;
-        animator.SetBool("isMoved", false );
+        animator.SetBool("isMoved", false);
         canvasTimer.gameObject.SetActive(false);
     }
     private void UpdateTimer()
     {
 
-            float remainingTime = searchDuration - searchTimer;
-            int minutes = Mathf.FloorToInt(remainingTime / 60); 
-            int seconds = Mathf.FloorToInt(remainingTime % 60); 
+        float remainingTime = searchDuration - searchTimer;
+        int minutes = Mathf.FloorToInt(remainingTime / 60);
+        int seconds = Mathf.FloorToInt(remainingTime % 60);
 
-            if (minutes > 0)
-            {
-                textTimer.text = $"{minutes}:{seconds:D2}"; 
-            }
-            else
-            {
-                textTimer.text = $"{seconds} ";
-            }
-        
+        if (minutes > 0)
+        {
+            textTimer.text = $"{minutes}:{seconds:D2}";
+        }
+        else
+        {
+            textTimer.text = $"{seconds} ";
+        }
+
     }
 }

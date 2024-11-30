@@ -29,7 +29,6 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Transform dropPosition;
     private Inventory inventory;
-   // public GameObject gunObject;
     [SerializeField] Gun currentGun;
 
     [SerializeField] private TileGeneration tileGeneration;
@@ -40,12 +39,10 @@ public class Player : MonoBehaviour
     private float throwForce = 7f;
 
     [SerializeField] private List<GameObject> weapons = new List<GameObject>();
-    //private int currentWeaponIndex = 0;
     public bool isGun;
     public bool isGarpun;
 
-    //public LimbSolver2D hand1;
-    //public CCDSolver2D hand2;
+
     public Transform hand1;
     public Transform hand2;
     private Transform hand1Target; 
