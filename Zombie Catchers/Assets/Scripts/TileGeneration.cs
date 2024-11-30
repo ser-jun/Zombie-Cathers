@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public class TileGeneration : MonoBehaviour
 {
@@ -22,8 +22,8 @@ public class TileGeneration : MonoBehaviour
     Transform[] pointToRun;
 
     [SerializeField] private GameObject brain;
+    public Text coinsCount;
 
-    
     public List<GameObject> spawnedBrains = new List<GameObject>();
     void Start()
     {
@@ -32,6 +32,7 @@ public class TileGeneration : MonoBehaviour
         pointToRun = new Transform[2] { leftPoint, rightPoint };
         player = FindObjectOfType<Player>();
         Generate();
+        UpdateCoinsCountUI();
     }
     void Update()
     {
@@ -52,6 +53,11 @@ public class TileGeneration : MonoBehaviour
                 CheckAndSpawnZombie(spawnedBrains[i].transform);
             }
         }
+    }
+    private void UpdateCoinsCountUI()
+    {
+        GameData data = SaveManager.Instance.LoadData();
+        coinsCount.text = data.coins.ToString();
     }
     void Generate()
     {

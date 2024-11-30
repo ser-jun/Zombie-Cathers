@@ -23,12 +23,14 @@ public class Zombie : MonoBehaviour
     public Transform brainTransform;
     [SerializeField] float maxDistacneToPlayer; 
 
-    [SerializeField] private float jumpForce = 1.5f;
+    [SerializeField] private float jumpForce =5f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float distanceToObstacle = 1f;
     [SerializeField] private float distanceToGround = 1f;
     Player player;
     bool isLookedPlayer;
+
+    public GameObject coinPrefab;
     #endregion
     private void Start()
     {
@@ -54,11 +56,25 @@ public class Zombie : MonoBehaviour
         }
 
     }
+    private void GenerateCoins()
+    {
+        float spawnRadius = 2f;
+        int count = Random.Range(2, 8);
+        for (int i = 0; i < count; i++)
+        {
+            Vector3 spawnPosition = transform.position + new Vector3 (Random.Range(-spawnRadius,spawnRadius), Random.Range(-spawnRadius, spawnRadius),0);
+            GameObject coin = Instantiate(coinPrefab, spawnPosition, Quaternion.identity);
+
+            Rigidbody2D rbCoin = coin.GetComponent<Rigidbody2D>();
+            rbCoin.AddForce(new Vector2(Random.Range(-2f, 2f), Random.Range(2f, 5f)), ForceMode2D.Impulse);
+        }
+    }
     public void Die()
     {
         isDead = true;
         animator.SetTrigger("Dead");
         CountKilledZombies.Instance.IncrementKillCount();
+        GenerateCoins();
         rb.freezeRotation = false;
         capsuleCollider.size = new Vector2(0.3f, 1f);
 
@@ -96,7 +112,7 @@ public class Zombie : MonoBehaviour
             return null;
         }
     }
-    private bool CheckPlayerWhileEating() // neeed fix distance
+    private bool CheckPlayerWhileEating() 
     {
         if (brainTransform == null) return false; 
 
@@ -158,7 +174,7 @@ public class Zombie : MonoBehaviour
         }
         else if (isGrounted && !isGroundUnderLegs)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            rb.velocity = new Vector2(rb.velocity.x, 7.5f);
             canJump = false;
         }
         else

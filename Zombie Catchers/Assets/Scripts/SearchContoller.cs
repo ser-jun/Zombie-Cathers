@@ -19,11 +19,17 @@ public class Searcher : MonoBehaviour
     public Text textTimer;
     public Button playButton;
     private bool isTimerRunning = true;
+    public GameObject panel;
+    public Button noButton;
+    public Button yesButton;
+    public Canvas canvasTimer;
     void Start()
     {
         GenerateNewPosition();
         animator = GetComponent<Animator>();
         playButton = FindObjectOfType<Button>();
+        noButton.onClick.AddListener(ClosePanel);
+        yesButton.onClick.AddListener(ClickYesButton);
 
     }
     void Update()
@@ -41,20 +47,26 @@ public class Searcher : MonoBehaviour
         Move();
             if (isTimerRunning)
             {
-                //SetButtonColor(Color.black);
+                
                 playButton.interactable = false;
             }
         }
     }
-    //private void SetButtonColor(Color color)
-    //{
-    //    if (playButton != null)
-    //    {
-    //        ColorBlock buttonColors = playButton.colors;
-    //        buttonColors.normalColor = color;
-    //        playButton.colors = buttonColors;
-    //    }
-    //}
+    private void ClickYesButton()
+    {
+        StopSearching();
+        panel.SetActive(false);    
+        
+    }
+    private void ClosePanel()
+    {
+        panel.SetActive(false);
+    }
+    private void OnMouseDown()
+    {
+        panel.SetActive(true);
+    }
+    #region generatePosition
     private float RandomGenerationXPosition ()
     {
         return Random.Range(minXPosition, maxXPosition);
@@ -68,6 +80,7 @@ public class Searcher : MonoBehaviour
     {
         targetPosition= new Vector3(RandomGenerationXPosition(), RandomGenerationYPosition(), transform.position.z);
     }
+    #endregion
     private void Move()
     {
 
@@ -97,8 +110,8 @@ public class Searcher : MonoBehaviour
         isPaused=true;
         isTimerRunning = false;
         playButton.interactable = true;
-        //SetButtonColor(Color.white);
         animator.SetBool("isMoved", false );
+        canvasTimer.gameObject.SetActive(false);
     }
     private void UpdateTimer()
     {

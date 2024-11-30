@@ -1109,6 +1109,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: -8653719598885068355, guid: 5c56d2da6c7f83b4c872827597538a98, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: -7789796370800890597, guid: 5c56d2da6c7f83b4c872827597538a98, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -1451,7 +1455,7 @@ MonoBehaviour:
   dropPosition: {fileID: 7322138369564987820}
   currentGun: {fileID: 4445251957646735533}
   tileGeneration: {fileID: 0}
-  airplane: {fileID: 0}
+  airplane: {fileID: 823761591297427633, guid: 62dd96f55664f8149951ef05f6c3e377, type: 3}
   weapons:
   - {fileID: 590950992401392629}
   - {fileID: 3668245539908983241}
