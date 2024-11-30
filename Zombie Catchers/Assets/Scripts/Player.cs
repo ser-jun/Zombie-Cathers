@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
     AimController aimController;
     private float throwForce = 7f;
 
-    [SerializeField] private List<GameObject> weapons = new List<GameObject>();
+    public List<GameObject> weapons = new List<GameObject>();
     public bool isGun;
     public bool isGarpun;
 
@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
     public Transform hand2;
     private Transform hand1Target; 
     private Transform hand2Target;
+    public static Player Instance;
     #endregion
     private void Awake()
     {
@@ -55,6 +56,16 @@ public class Player : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
         inventory = gameObject.GetComponent<Inventory>();
         tileGeneration = FindObjectOfType<TileGeneration>();
+        if (Instance== null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        
     }
 
     void Start()
