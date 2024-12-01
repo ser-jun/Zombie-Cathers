@@ -9,21 +9,18 @@ public class AimController : MonoBehaviour
     public Transform playerTransform;
     public float maxDistance = 6f;
     public float minDistance = 1.6f;
-    private SpawnPlayerAndPlain spawn;
+
     void Start()
     {
-        spawn = GetComponent<SpawnPlayerAndPlain>();
+
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector3 cursorPos= Camera.main.ScreenToWorldPoint(Input.mousePosition);
         cursorPos.z = 0;
         aimTransform.position = cursorPos;
 
-        //if (spawn != null && spawn.isSpawned)
-        //{
             Vector3 dir = cursorPos - playerTransform.position;
             if (dir.magnitude > maxDistance)
             {
@@ -36,7 +33,6 @@ public class AimController : MonoBehaviour
 
             }
             aimTransform.position = playerTransform.position + dir;
-        //}
     }
     
 }

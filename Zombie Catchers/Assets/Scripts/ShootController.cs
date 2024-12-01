@@ -5,7 +5,7 @@ public class Shot : MonoBehaviour
     [SerializeField] private GameObject bulletPref;
     [SerializeField] private Transform firePosition;
     [SerializeField] private Transform aimTransform;
-    private float speedBullet = 10f;
+    private float speedBullet = 8f;
 
     private float shootTime = 3f;
     private float nextShoot = 0f;
@@ -98,3 +98,4 @@ public class Shot : MonoBehaviour
         }
     }
 }
+ 

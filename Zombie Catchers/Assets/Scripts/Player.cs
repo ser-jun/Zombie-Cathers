@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
         inventory = gameObject.GetComponent<Inventory>();
         tileGeneration = FindObjectOfType<TileGeneration>();
-        if (Instance== null)
+        if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
@@ -65,7 +65,7 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        
+
     }
 
     void Start()
@@ -106,7 +106,6 @@ public class Player : MonoBehaviour
     {
 
         aimController = aim;
-        //dropPosition = aim.transform;
     }
    
     private void DropObject()
@@ -194,6 +193,7 @@ public class Player : MonoBehaviour
 
     private void ChangeWeapon(int weaponIndex)
     {
+       
         for (int i = 0; i < weapons.Count; i++)
         {
             if (weapons[i] != null)
@@ -224,13 +224,14 @@ public class Player : MonoBehaviour
 
     private void ChooseWeapon()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        GameData data = SaveManager.Instance.LoadData();
+        if (Input.GetKeyDown(KeyCode.Alpha1) && data.upgradeWeapons[0] >=1)
         {
             isGun=true;
             isGarpun=false;
             ChangeWeapon(0);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && data.upgradeWeapons[1] >= 1)
         {
             isGarpun=true;
             isGun=false;

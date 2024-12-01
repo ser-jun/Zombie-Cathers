@@ -58,7 +58,7 @@ public class Searcher : MonoBehaviour
         }
        
     }
-    private void UpdateCoinUI()
+    public void UpdateCoinUI()
     {
         GameData data = SaveManager.Instance.LoadData();
         countCoinsText.text = data.coins.ToString();
