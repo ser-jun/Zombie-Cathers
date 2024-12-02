@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        //dropPosition = aimController.transform;
+        //PutHat();
         ChangeWeapon(0);
     }
 
@@ -167,10 +167,17 @@ public class Player : MonoBehaviour
             Vector3 scale = transform.localScale;
             scale.x = dir > 0 ? 1f : -1f;
             transform.localScale = scale;
-            if (currentGun != null)
+            foreach (var weapon in weapons)
             {
-                currentGun.transform.localScale = new Vector3(scale.x, scale.x, scale.z);
+                if (weapons != null)
+                {
+                    weapon.transform.localScale = new Vector3(scale.x, scale.x, scale.z);
+                }
             }
+            //if (currentGun != null)
+            //{
+            //    currentGun.transform.localScale = new Vector3(scale.x, scale.x, scale.z);
+            //}
         }
 
         rb.velocity = new Vector2(dir * moveSpeed, rb.velocity.y);
