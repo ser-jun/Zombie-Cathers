@@ -33,8 +33,12 @@ public class ShopScript : MonoBehaviour
     public GameObject additionalShopPanel;
     public Button closeAdditionalPanelButton;
     public Button openAdditionalPanelButton;
+    public Button buyCap;
+    public Button chooseCapButton;
+
     void Start()
     {
+        GameData data = SaveManager.Instance.LoadData();
         shopButton.onClick.AddListener(() => shopPanel.SetActive(true));
         closeShopPanel.onClick.AddListener(() => shopPanel.SetActive(false));
 
@@ -44,6 +48,7 @@ public class ShopScript : MonoBehaviour
             shopPanel.SetActive(false);
         });
         closeGunShopPanel.onClick.AddListener(() => shopGunPanel.SetActive(false));
+        buyGarpun.onClick.AddListener(() => BuyItem("upgradeWeapons", 1, 1500, buyGarpun));
 
         upgradeShopButtonOpen.onClick.AddListener(() =>
         {
@@ -52,7 +57,6 @@ public class ShopScript : MonoBehaviour
         });
         closeUpgradePanel.onClick.AddListener(() => upgradeShopPanel.SetActive(false));
 
-        buyGarpun.onClick.AddListener(() => BuyWeapon(1, 1500, buyGarpun));
 
         openAdditionalPanelButton.onClick.AddListener(() =>
          {
@@ -60,8 +64,9 @@ public class ShopScript : MonoBehaviour
              shopPanel.SetActive(false);
          });
         closeAdditionalPanelButton.onClick.AddListener(() => additionalShopPanel.SetActive(false));
-
-
+        buyCap.onClick.AddListener(() => BuyItem("caps",0, 2000, buyCap));
+        chooseCapButton.onClick.AddListener(() =>SellCap());
+  
 
         upgradeGunButton.onClick.AddListener(() => UpgradeWeapon(0, upgradeGunButton, miniPanelIndicatorGun, textPriceGun));
         ColorSave(0, miniPanelIndicatorGun);
@@ -72,42 +77,50 @@ public class ShopScript : MonoBehaviour
         ColorSave(1, miniPanelIndicatorGarpun);
         CheckButtonState(1, upgradeGarpunButton);
         SavePrice(1, textPriceGarpun);
+    
     }
     private void Update()
     {
         CheckButtonState(1, upgradeGarpunButton);
     }
 
-    private void BuyWeapon(int index, int price, Button button)
+  
+   private void SellCap()
     {
         GameData data = SaveManager.Instance.LoadData();
-        if (data.upgradeWeapons[index] == 1 || data.coins < price)
+        if (data.caps[0]==1)
+        {
+        data.caps[0] -= 1;
+        data.coins += 2000;
+        }
+        else { chooseCapButton.interactable = false; }
+        SaveManager.Instance.SaveData(data);
+        searcher.UpdateCoinUI();
+    }
+    private void BuyItem(string nameList, int index, int price, Button button)
+    {
+        GameData data = SaveManager.Instance.LoadData();
+        List<int> itemList = nameList switch
+        {
+            "upgradeWeapons" => data.upgradeWeapons,
+            "caps" => data.caps,
+            _=>null
+        };
+
+        if (itemList[index] == 1 || data.coins < price)
         {
             button.interactable = false;
         }
         else
         {
             data.coins -= price;
-            data.upgradeWeapons[index] = 1;
+            itemList[index] = 1;
             SaveManager.Instance.SaveData(data);
             searcher.UpdateCoinUI();
         }
     }
-    private void BuyCaps(int index, int price, Button button) //Объеденить два метода сделать универсальный
-    {
-        GameData data = SaveManager.Instance.LoadData();
-        if (data.caps[index] == 1 || data.coins < price)
-        {
-            button.interactable = false;
-        }
-        else
-        {
-            data.coins -= price;
-            data.caps[index] = 1;
-            SaveManager.Instance.SaveData(data);
-            searcher.UpdateCoinUI();
-        }
-    }
+
+
     private void ColorSave(int index, List<GameObject> indicator)
     {
         GameData data = SaveManager.Instance.LoadData();

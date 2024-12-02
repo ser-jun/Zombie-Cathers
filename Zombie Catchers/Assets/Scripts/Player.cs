@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.U2D.IK;
 
@@ -48,6 +49,7 @@ public class Player : MonoBehaviour
     private Transform hand1Target; 
     private Transform hand2Target;
     public static Player Instance;
+    public GameObject hat;
     #endregion
     private void Awake()
     {
@@ -127,6 +129,15 @@ public class Player : MonoBehaviour
             CheckCountBrains(objectToDrop);
         }
 
+    }
+    private void PutHat()
+    {
+        GameData data = SaveManager.Instance.LoadData();
+        if (data.caps[0]==1)
+        {
+            hat.SetActive(true);
+        }
+        else { hat.SetActive(false); }
     }
     async private void CheckCountBrains(GameObject obj)
     {

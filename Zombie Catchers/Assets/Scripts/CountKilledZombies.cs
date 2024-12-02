@@ -21,21 +21,19 @@ public class CountKilledZombies : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         else { Destroy(gameObject); }
-        
+
     }
 
     private void Start()
     {
-        // Скрываем панель завершения игры при старте
         if (endGamePanel != null)
         {
             endGamePanel.SetActive(false);
         }
 
-        // Назначаем слушатель кнопки завершения
         if (endGameButton != null)
         {
-            endGameButton.onClick.RemoveAllListeners(); // Убираем старые слушатели
+
             endGameButton.onClick.AddListener(() =>
             {
                 SceneManager.LoadScene("Map");
@@ -43,7 +41,7 @@ public class CountKilledZombies : MonoBehaviour
             });
         }
     }
-
+     
     public void IncrementKillCount()
     {
         zombieKillCount++;
@@ -52,17 +50,15 @@ public class CountKilledZombies : MonoBehaviour
 
     public void UpdateKillCount()
     {
-        // Обновляем текст счётчика
-        if (killCountText != null && tileGeneration != null)
-        {
+
             killCountText.text = $"{zombieKillCount} / {tileGeneration.countZombies}";
-        }
+ 
         StopGame();
     }
 
     private void StopGame()
     {
-        // Проверяем, завершена ли игра
+
         if (tileGeneration != null && zombieKillCount == tileGeneration.countZombies)
         {
             if (endGamePanel != null)
