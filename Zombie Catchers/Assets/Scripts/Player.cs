@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        //PutHat();
+        PutHat();
         ChangeWeapon(0);
     }
 
@@ -169,9 +169,14 @@ public class Player : MonoBehaviour
             transform.localScale = scale;
             foreach (var weapon in weapons)
             {
-                if (weapons != null)
+                if (weapon != null)
                 {
-                    weapon.transform.localScale = new Vector3(scale.x, scale.x, scale.z);
+                    Vector3 weaponScale = weapon.transform.localScale;
+                    weapon.transform.localScale = new Vector3(
+                        Mathf.Abs(weaponScale.x) * scale.x,
+                        weaponScale.x,
+                        weaponScale.z
+                    );
                 }
             }
             //if (currentGun != null)
