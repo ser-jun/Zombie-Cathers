@@ -29,6 +29,10 @@ public class ShopScript : MonoBehaviour
     public Button upgradeGarpunButton;
     public List<GameObject> miniPanelIndicatorGarpun = new List<GameObject>();
     public Text textPriceGarpun;
+
+    public GameObject additionalShopPanel;
+    public Button closeAdditionalPanelButton;
+    public Button openAdditionalPanelButton;
     void Start()
     {
         shopButton.onClick.AddListener(() => shopPanel.SetActive(true));
@@ -48,7 +52,15 @@ public class ShopScript : MonoBehaviour
         });
         closeUpgradePanel.onClick.AddListener(() => upgradeShopPanel.SetActive(false));
 
-        buyGarpun.onClick.AddListener(() => BuyWeapon(1, 1500));
+        buyGarpun.onClick.AddListener(() => BuyWeapon(1, 1500, buyGarpun));
+
+        openAdditionalPanelButton.onClick.AddListener(() =>
+         {
+             additionalShopPanel.SetActive(true);
+             shopPanel.SetActive(false);
+         });
+        closeAdditionalPanelButton.onClick.AddListener(() => additionalShopPanel.SetActive(false));
+
 
 
         upgradeGunButton.onClick.AddListener(() => UpgradeWeapon(0, upgradeGunButton, miniPanelIndicatorGun, textPriceGun));
@@ -61,15 +73,40 @@ public class ShopScript : MonoBehaviour
         CheckButtonState(1, upgradeGarpunButton);
         SavePrice(1, textPriceGarpun);
     }
+    private void Update()
+    {
+        CheckButtonState(1, upgradeGarpunButton);
+    }
 
-    private void BuyWeapon(int index, int price)
+    private void BuyWeapon(int index, int price, Button button)
     {
         GameData data = SaveManager.Instance.LoadData();
-        data.coins -= price;
-        data.upgradeWeapons[index] = 1;
-        SaveManager.Instance.SaveData(data);
-        searcher.UpdateCoinUI();
-
+        if (data.upgradeWeapons[index] == 1 || data.coins < price)
+        {
+            button.interactable = false;
+        }
+        else
+        {
+            data.coins -= price;
+            data.upgradeWeapons[index] = 1;
+            SaveManager.Instance.SaveData(data);
+            searcher.UpdateCoinUI();
+        }
+    }
+    private void BuyCaps(int index, int price, Button button) //Объеденить два метода сделат универсальный
+    {
+        GameData data = SaveManager.Instance.LoadData();
+        if (data.caps[index] == 1 || data.coins < price)
+        {
+            button.interactable = false;
+        }
+        else
+        {
+            data.coins -= price;
+            data.caps[index] = 1;
+            SaveManager.Instance.SaveData(data);
+            searcher.UpdateCoinUI();
+        }
     }
     private void ColorSave(int index, List<GameObject> indicator)
     {
@@ -96,7 +133,7 @@ public class ShopScript : MonoBehaviour
         {
             case 1:
                 upgradeCost = int.Parse(priceText.text);
-                
+
                 break;
             case 2:
                 upgradeCost = int.Parse(priceText.text);
@@ -111,14 +148,14 @@ public class ShopScript : MonoBehaviour
             {
                 case 2:
                     ChangeColorIndicator(0, indicator);
-                    priceText.text = (upgradeCost*2).ToString();
+                    priceText.text = (upgradeCost * 2).ToString();
 
                     break;
                 case 3:
                     ChangeColorIndicator(1, indicator);
                     button.interactable = false;
                     priceText.text = "MAX";
-                   
+
                     break;
             }
             data.price[weaponIndex] = priceText.text;
@@ -127,26 +164,26 @@ public class ShopScript : MonoBehaviour
         }
         else
         {
-            button.interactable = false; 
+            button.interactable = false;
         }
     }
-    private void SavePrice (int index, Text textPrice)
+    private void SavePrice(int index, Text textPrice)
     {
         GameData data = SaveManager.Instance.LoadData();
         textPrice.text = data.price[index].ToString();
     }
- 
+
     private void CheckButtonState(int weaponIndex, Button button)
     {
         GameData data = SaveManager.Instance.LoadData();
 
         if (data.upgradeWeapons[weaponIndex] == 0 || data.upgradeWeapons[weaponIndex] == 3)
         {
-            button.interactable = false; 
+            button.interactable = false;
         }
         else
         {
-            button.interactable = true; 
+            button.interactable = true;
         }
     }
 

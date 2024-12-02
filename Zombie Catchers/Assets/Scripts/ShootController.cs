@@ -5,15 +5,15 @@ public class Shot : MonoBehaviour
     [SerializeField] private GameObject bulletPref;
     [SerializeField] private Transform firePosition;
     [SerializeField] private Transform aimTransform;
-    private float speedBullet = 8f;
+    private float speedBullet;
 
-    private float shootTime = 3f;
+    private float shootTime;
     private float nextShoot = 0f;
     AimController aimController;
     Player player;
     public GameObject arrow;
     public GameObject garpun;
-    private float speedArrow = 8f;
+    private float speedArrow;
     private LineRenderer lineRenderer;
     public Transform startPosition;
 
@@ -23,6 +23,7 @@ public class Shot : MonoBehaviour
 
     void Start()
     {
+        UpgradeByLevel();
         aimController = FindObjectOfType<AimController>();
         aimTransform = aimController.transform;
         player = GetComponent<Player>();
@@ -34,7 +35,6 @@ public class Shot : MonoBehaviour
         lineRenderer.endColor = Color.magenta;
 
     }
-
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && Time.time >= nextShoot && player.isGun)
@@ -57,7 +57,39 @@ public class Shot : MonoBehaviour
         }
 
     }
-   
+    private void UpgradeByLevel()
+    {
+        GameData data = SaveManager.Instance.LoadData();
+        switch (data.upgradeWeapons[0])
+        {
+            case 1:
+                speedBullet = 6f;
+                shootTime = 4f;
+                break;
+            case 2:
+                speedBullet = 8f;
+                shootTime = 3f;
+                break;
+            case 3:
+                speedBullet = 10f;
+                shootTime = 2f;
+                break;
+        }
+        switch (data.upgradeWeapons[1])
+        {
+            case 1:
+                speedArrow = 8f;
+                break;
+            case 2:
+                speedArrow = 10f;
+                break;
+            case 3:
+                speedArrow = 12f;
+                break;
+        }
+
+    }
+
     private void ShootGun()
     {
 
@@ -98,4 +130,3 @@ public class Shot : MonoBehaviour
         }
     }
 }
- 

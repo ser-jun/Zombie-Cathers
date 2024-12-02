@@ -54,6 +54,7 @@ public class Zombie : MonoBehaviour
             MoveZombie(target);
 
         }
+        DestroyZombies();
 
     }
     private void GenerateCoins()
@@ -120,28 +121,35 @@ public class Zombie : MonoBehaviour
         return distanceToPlayer < maxDistacneToPlayer; 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Bullet"))
-        {
-            if (!isDead)
-            {
-                animator.SetTrigger("Dead");
-                Destroy(collision.gameObject);
-                CountKilledZombies.Instance.IncrementKillCount();
-                rb.freezeRotation = false;
-                capsuleCollider.size = new Vector2(0.3f, 1f);
-                isDead = true;
-                
-            }
-        }
-    }
-    
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.CompareTag("Bullet"))
+    //    {
+    //        if (!isDead)
+    //        {
+    //            animator.SetTrigger("Dead");
+    //            Destroy(collision.gameObject);
+    //            CountKilledZombies.Instance.IncrementKillCount();
+    //            rb.freezeRotation = false;
+    //            capsuleCollider.size = new Vector2(0.3f, 1f);
+    //            isDead = true;
+
+    //        }
+    //    }
+    //}
+
     private void MoveZombie(Transform target)
     {
         Vector2 direction = (target.position - transform.position).normalized;
         DrawRaycast(direction);
         WalkingAndJumpCondition(direction);
+    }
+    private void DestroyZombies()
+    {
+        if (transform.position.y < -4.4f)
+        {
+            Destroy(gameObject);
+        }
     }
     private void DrawRaycast(Vector2 direction)
     {

@@ -20,6 +20,7 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] private Transform rightPoint;
     private List<GameObject> spawnObject = new List<GameObject>();
     Transform[] pointToRun;
+    public int countZombies;
 
     [SerializeField] private GameObject brain;
     public Text coinsCount;
@@ -32,6 +33,7 @@ public class TileGeneration : MonoBehaviour
         pointToRun = new Transform[2] { leftPoint, rightPoint };
         player = FindObjectOfType<Player>();
         Generate();
+        CountKilledZombies.Instance.UpdateKillCount();
         UpdateCoinsCountUI();
     }
     void Update()
@@ -69,6 +71,7 @@ public class TileGeneration : MonoBehaviour
             GameObject spawn = Instantiate(random, randomPosition, Quaternion.identity);
             spawnObject.Add(spawn);
             objectCount--;
+            countZombies++;
         }
     }
     private void CheckAndSpawnZombie(Transform brainTransform)

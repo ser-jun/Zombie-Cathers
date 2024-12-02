@@ -9,7 +9,7 @@ public class GameData
     public int coins;
 
 
-    public List<int> upgradeWeapons = new List<int>() { 0,0,0};
+    public List<int> upgradeWeapons = new List<int>() { 0, 0, 0 };
     public List<string> price = new List<string>() { null, null, null };
-
+    public List<int> caps = new List<int>() { 0, 0 };
 }
