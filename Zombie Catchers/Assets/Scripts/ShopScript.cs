@@ -93,7 +93,7 @@ public class ShopScript : MonoBehaviour
             searcher.UpdateCoinUI();
         }
     }
-    private void BuyCaps(int index, int price, Button button) //Объеденить два метода сделат универсальный
+    private void BuyCaps(int index, int price, Button button) //Объеденить два метода сделать универсальный
     {
         GameData data = SaveManager.Instance.LoadData();
         if (data.caps[index] == 1 || data.coins < price)

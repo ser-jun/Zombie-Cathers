@@ -5,6 +5,7 @@ public class Zombie : MonoBehaviour
 {
     #region variables
     private Animator animator;
+    public TileGeneration tileGeneration;
 
     private bool isDead = false;
     public bool IsDead () => isDead;   
@@ -34,6 +35,7 @@ public class Zombie : MonoBehaviour
     #endregion
     private void Start()
     {
+        tileGeneration = FindObjectOfType<TileGeneration>();    
         player = FindObjectOfType<Player>();
         playerTransform = player.transform;
         animator = GetComponent<Animator>();
@@ -55,7 +57,7 @@ public class Zombie : MonoBehaviour
 
         }
         DestroyZombies();
-
+        CountKilledZombies.Instance.UpdateKillCount();
     }
     private void GenerateCoins()
     {
@@ -149,6 +151,7 @@ public class Zombie : MonoBehaviour
         if (transform.position.y < -4.4f)
         {
             Destroy(gameObject);
+            tileGeneration.countZombies--;
         }
     }
     private void DrawRaycast(Vector2 direction)

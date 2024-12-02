@@ -92,7 +92,7 @@ public class Shot : MonoBehaviour
 
     private void ShootGun()
     {
-
+        isFire = true;
         GameObject bullet = Instantiate(bulletPref, firePosition.position, Quaternion.identity);
         Vector3 direction = (aimTransform.position - firePosition.position).normalized;
 
