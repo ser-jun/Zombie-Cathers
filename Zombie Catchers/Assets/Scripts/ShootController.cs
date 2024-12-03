@@ -25,9 +25,12 @@ public class Shot : MonoBehaviour
     public AudioClip shotGarpunSound;
     public AudioClip shotGunSound;
 
+    public ParticleSystem particle;
+
     void Start()
     {
         UpgradeByLevel();
+        
         audioSource = GetComponent<AudioSource>();
         aimController = FindObjectOfType<AimController>();
         aimTransform = aimController.transform;
@@ -42,10 +45,20 @@ public class Shot : MonoBehaviour
     }
     void Update()
     {
+        if (Time.time <= nextShoot)
+        {
+            particle.Stop();
+        }
+        else
+        {
+            particle.Play();
+        }
         if (Input.GetMouseButtonDown(0) && Time.time >= nextShoot && player.isGun)
         {
+
             ShootGun();
             nextShoot = Time.time + shootTime;
+            
             audioSource.PlayOneShot(shotGunSound);
         }
         else if (Input.GetMouseButtonDown(0) && player.isGarpun)

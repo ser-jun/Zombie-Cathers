@@ -2393,6 +2393,8 @@ MonoBehaviour:
   yesButton: {fileID: 1991636731}
   canvasTimer: {fileID: 1356014395}
   countCoinsText: {fileID: 1157520928}
+  searchSound: {fileID: 8300000, guid: 793140647e9382245a5383f3bbd52a46, type: 3}
+  clickSound: {fileID: 0}
 --- !u!4 &718242847 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4309783524357701963, guid: 34066817bfbed334ea2e730ce514dfef, type: 3}
