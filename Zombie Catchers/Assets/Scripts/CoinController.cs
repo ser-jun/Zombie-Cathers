@@ -8,11 +8,15 @@ public class CoinController : MonoBehaviour
     private Transform playerTransform;
     private Player player;
     public Text coinsCount;
+    private AudioSource audioSource;
+    public AudioClip tookCoin;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         coinsCount = GameObject.Find("CoinsCount").GetComponent<Text>();
-         player =FindObjectOfType<Player>();
+        player = FindObjectOfType<Player>();
         UpdateCoinsCountUI(coinsCount);
 
     }
@@ -34,17 +38,29 @@ public class CoinController : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+           // audioSource.PlayOneShot(tookCoin);
+            PlaySound(tookCoin);
             Destroy(gameObject);
             GameData data = SaveManager.Instance.LoadData();
-            data.coins+=Random.Range(40,100);
+            data.coins += Random.Range(40, 100);
             SaveManager.Instance.SaveData(data);
             UpdateCoinsCountUI(coinsCount);
-
         }
     }
+    private void PlaySound(AudioClip clip)
+    {
+        GameObject soundObject = new GameObject("CoinSound");
+        AudioSource source = soundObject.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.Play();
+
+        Destroy(soundObject, clip.length); 
+    }
+
 
     public void UpdateCoinsCountUI(Text coinsCountInText)
     {
+
         GameData data = SaveManager.Instance.LoadData();
         coinsCountInText.text = data.coins.ToString();
     }

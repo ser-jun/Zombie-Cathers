@@ -23,11 +23,14 @@ public class Searcher : MonoBehaviour
     public Button yesButton;
     public Canvas canvasTimer;
     public Text countCoinsText;
-
+    private AudioSource audioSource;
+    public AudioClip searchSound;
+    public AudioClip clickSound;
 
     void Start()
     {
         GenerateNewPosition();
+        audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         noButton.onClick.AddListener(ClosePanel);
@@ -66,6 +69,7 @@ public class Searcher : MonoBehaviour
     private void ClickYesButton()
     {
         StopSearching();
+        audioSource.PlayOneShot(clickSound);
         panel.SetActive(false);
         GameData data = SaveManager.Instance.LoadData();
         data.coins -= 1000; 
@@ -75,6 +79,7 @@ public class Searcher : MonoBehaviour
     }
     private void ClosePanel()
     {
+        audioSource.PlayOneShot(clickSound);
         panel.SetActive(false);
     }
     private void OnMouseDown()
@@ -116,10 +121,22 @@ public class Searcher : MonoBehaviour
     {
         isPaused = true;
         animator.SetBool("isMoved", false);
-        yield return new WaitForSeconds(3f);
+
+        float duration = 3f; 
+        float soundInterval = 0.3f; 
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            audioSource.PlayOneShot(searchSound); 
+            yield return new WaitForSeconds(soundInterval);
+            elapsedTime += soundInterval;
+        }
+
         GenerateNewPosition();
         isPaused = false;
     }
+
     private void StopSearching()
     {
         isPaused = true;

@@ -20,10 +20,15 @@ public class Shot : MonoBehaviour
     public bool isFire;
     public GameObject arrowPref;
     public GameObject spawnPosition;
+    private AudioSource audioSource;
+
+    public AudioClip shotGarpunSound;
+    public AudioClip shotGunSound;
 
     void Start()
     {
         UpgradeByLevel();
+        audioSource = GetComponent<AudioSource>();
         aimController = FindObjectOfType<AimController>();
         aimTransform = aimController.transform;
         player = GetComponent<Player>();
@@ -41,11 +46,13 @@ public class Shot : MonoBehaviour
         {
             ShootGun();
             nextShoot = Time.time + shootTime;
+            audioSource.PlayOneShot(shotGunSound);
         }
         else if (Input.GetMouseButtonDown(0) && player.isGarpun)
         {
 
             ShootGarpun();
+            audioSource.PlayOneShot(shotGarpunSound);
         }
         if (isFire)
         {

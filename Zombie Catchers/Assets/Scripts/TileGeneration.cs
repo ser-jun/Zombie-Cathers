@@ -26,13 +26,19 @@ public class TileGeneration : MonoBehaviour
     public Text coinsCount;
 
     public List<GameObject> spawnedBrains = new List<GameObject>();
+    private AudioSource audioSource;
+    public AudioClip spawnZombieSound;
+    public AudioClip backgroundSoundMusic;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
         pointToRun = new Transform[2] { leftPoint, rightPoint };
         player = FindObjectOfType<Player>();
+        audioSource.volume = 0.5f;
+        audioSource.Play();
         Generate();
         CountKilledZombies.Instance.UpdateKillCount();
         UpdateCoinsCountUI();
@@ -41,8 +47,9 @@ public class TileGeneration : MonoBehaviour
     void Update()
     {
         BrainsHendler();
+  
     }
-
+  
     private void UpdateCoinsCountUI()
     {
         GameData data = SaveManager.Instance.LoadData();
@@ -107,6 +114,7 @@ public class TileGeneration : MonoBehaviour
                         usedSpawnObjects.Add(spawn); 
 
                         GameObject zombieObj = Instantiate(zombiePref, spawn.transform.position, Quaternion.identity);
+                        audioSource.PlayOneShot(spawnZombieSound);
                         Zombie zombie = zombieObj.GetComponent<Zombie>();
                         zombie.brainTransform = brainTransform;
                         zombie.playerTransform = player.transform;

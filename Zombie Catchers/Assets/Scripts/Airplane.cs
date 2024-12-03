@@ -3,7 +3,8 @@ using UnityEngine;
 public class Airplane : MonoBehaviour
 {
     public GameObject airplanePrefab;
-    private float moveSpeed = 4f;
+
+    private float moveSpeed = 6f;
     private float moveOnY = 0.5f;
     private Rigidbody2D rb;
     Player player;
@@ -24,6 +25,11 @@ public class Airplane : MonoBehaviour
     [SerializeField] float flightHeigth;
 
     private bool isMoving = true;
+    private AudioSource audioSource;
+    public AudioClip moveAirplaneSound;
+    private bool isPlayed = false;
+    private bool isPlayedSvaling = false;
+    public AudioClip scaleAirplaneSound;
 
 
 
@@ -32,6 +38,7 @@ public class Airplane : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         player = FindObjectOfType<Player>();
+        audioSource =gameObject.GetComponent<AudioSource>();
         originalScale = airplanePrefab.transform.localScale;
         targetScale = originalScale * 0.5f;
         targetPositionOffset = airplanePrefab.transform.position + new Vector3(0, -2f, 0);
@@ -47,6 +54,7 @@ public class Airplane : MonoBehaviour
             if (Mathf.Abs(airplanePrefab.transform.position.x - targetX) > stopThreshold)
             {
                 MoveAirplane();
+                PlayMoveSound();
             }
             else
             {
@@ -64,7 +72,14 @@ public class Airplane : MonoBehaviour
             ScaleAirplain();
         }
     }
-
+    private void PlayMoveSound()
+    {
+        if (!audioSource.isPlaying && !isPlayed)
+        {
+            audioSource.PlayOneShot(moveAirplaneSound);
+            isPlayed = true;
+        }
+    }
     private void OnDrawGizmos()
     {
 
@@ -81,6 +96,7 @@ public class Airplane : MonoBehaviour
 
     private void ScaleAirplain()
     {
+        
         if (isScaling)
         {
 
@@ -89,8 +105,11 @@ public class Airplane : MonoBehaviour
             Vector3 directionToTarget = (targetPositionOffset - airplanePrefab.transform.position).normalized;
 
             rb.velocity = new Vector2(0, directionToTarget.y * scaleSpeed);
-
-
+            if(!audioSource.isPlaying && !isPlayedSvaling)
+            {
+            audioSource.PlayOneShot(scaleAirplaneSound);
+                isPlayedSvaling = true;
+            }
             if (Vector3.Distance(airplanePrefab.transform.localScale, targetScale) < 0.01f &&
                 Vector3.Distance(airplanePrefab.transform.position, targetPositionOffset) < 0.01f)
             {

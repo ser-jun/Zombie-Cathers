@@ -35,35 +35,62 @@ public class ShopScript : MonoBehaviour
     public Button openAdditionalPanelButton;
     public Button buyCap;
     public Button chooseCapButton;
+    private AudioSource audioSource;
+    public AudioClip buySound;
+    public AudioClip menuSound;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();  
         GameData data = SaveManager.Instance.LoadData();
-        shopButton.onClick.AddListener(() => shopPanel.SetActive(true));
-        closeShopPanel.onClick.AddListener(() => shopPanel.SetActive(false));
+        shopButton.onClick.AddListener(() => 
+        {
+            shopPanel.SetActive(true);
+            audioSource.PlayOneShot(menuSound);
+        });
+        closeShopPanel.onClick.AddListener(() => 
+        {
+            shopPanel.SetActive(false);
+            audioSource.PlayOneShot(menuSound);
+        });
 
         gunShopPanelButton.onClick.AddListener(() =>
         {
             shopGunPanel.SetActive(true);
             shopPanel.SetActive(false);
+            audioSource.PlayOneShot(menuSound);
         });
-        closeGunShopPanel.onClick.AddListener(() => shopGunPanel.SetActive(false));
+        closeGunShopPanel.onClick.AddListener(() => 
+        {
+            shopGunPanel.SetActive(false);
+            audioSource.PlayOneShot(menuSound);
+        });
         buyGarpun.onClick.AddListener(() => BuyItem("upgradeWeapons", 1, 1500, buyGarpun));
 
         upgradeShopButtonOpen.onClick.AddListener(() =>
         {
             upgradeShopPanel.SetActive(true);
             shopPanel.SetActive(false);
+            audioSource.PlayOneShot(menuSound);
         });
-        closeUpgradePanel.onClick.AddListener(() => upgradeShopPanel.SetActive(false));
+        closeUpgradePanel.onClick.AddListener(() => 
+        {
+            upgradeShopPanel.SetActive(false);
+            audioSource.PlayOneShot(menuSound);
+        });
 
 
         openAdditionalPanelButton.onClick.AddListener(() =>
          {
              additionalShopPanel.SetActive(true);
              shopPanel.SetActive(false);
+             audioSource.PlayOneShot(menuSound);
          });
-        closeAdditionalPanelButton.onClick.AddListener(() => additionalShopPanel.SetActive(false));
+        closeAdditionalPanelButton.onClick.AddListener(() => 
+        {
+            additionalShopPanel.SetActive(false);
+            audioSource.PlayOneShot(menuSound);
+        });
         buyCap.onClick.AddListener(() => BuyItem("caps",0, 2000, buyCap));
         chooseCapButton.onClick.AddListener(() =>SellCap());
   
@@ -84,13 +111,14 @@ public class ShopScript : MonoBehaviour
         CheckButtonState(1, upgradeGarpunButton);
     }
 
-  
+    
    private void SellCap()
     {
         GameData data = SaveManager.Instance.LoadData();
         if (data.caps[0]==1)
         {
-        data.caps[0] -= 1;
+            audioSource.PlayOneShot(buySound);
+            data.caps[0] -= 1;
         data.coins += 2000;
         }
         else { chooseCapButton.interactable = false; }
@@ -113,6 +141,7 @@ public class ShopScript : MonoBehaviour
         }
         else
         {
+            audioSource.PlayOneShot(buySound);
             data.coins -= price;
             itemList[index] = 1;
             SaveManager.Instance.SaveData(data);
@@ -155,6 +184,7 @@ public class ShopScript : MonoBehaviour
 
         if (data.coins >= upgradeCost && data.upgradeWeapons[weaponIndex] > 0 && data.upgradeWeapons[weaponIndex] < 3)
         {
+            audioSource.PlayOneShot(buySound);
             data.coins -= upgradeCost;
             data.upgradeWeapons[weaponIndex] += 1;
             switch (data.upgradeWeapons[weaponIndex])

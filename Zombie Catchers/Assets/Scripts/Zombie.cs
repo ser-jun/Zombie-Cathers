@@ -32,9 +32,15 @@ public class Zombie : MonoBehaviour
     bool isLookedPlayer;
 
     public GameObject coinPrefab;
+    private AudioSource audioSource;
+    public AudioClip soundZombie;
+    private bool hasPlayed=false;
+    public AudioClip eatingBrainSound;
+    public AudioClip dieZombieSound;
     #endregion
     private void Start()
     {
+        audioSource = gameObject.GetComponent<AudioSource>();
         tileGeneration = FindObjectOfType<TileGeneration>();    
         player = FindObjectOfType<Player>();
         playerTransform = player.transform;
@@ -76,6 +82,7 @@ public class Zombie : MonoBehaviour
     {
         isDead = true;
         animator.SetTrigger("Dead");
+        audioSource.PlayOneShot(dieZombieSound);
         CountKilledZombies.Instance.IncrementKillCount();
         GenerateCoins();
         rb.freezeRotation = false;
@@ -96,7 +103,11 @@ public class Zombie : MonoBehaviour
         float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
         if (distanceToPlayer < maxDistacneToPlayer)
         {
-
+            if (!hasPlayed)
+            {
+            audioSource.PlayOneShot(soundZombie);
+                hasPlayed = true;
+            }
             isLookedPlayer = true;
             bool isFacingRight = transform.position.x - playerTransform.position.x < 0;
             if (isFacingRight)
@@ -192,6 +203,10 @@ public class Zombie : MonoBehaviour
         else
         {
             animator.SetBool("beforeBrain", true);
+            if (!audioSource.isPlaying)
+            {
+            audioSource.PlayOneShot(eatingBrainSound);
+            }
             animator.SetBool("isMoving", false);
             Brain brain = brainTransform.GetComponent<Brain>();
             brain.StartEating();

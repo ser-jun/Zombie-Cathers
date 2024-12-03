@@ -50,6 +50,11 @@ public class Player : MonoBehaviour
     private Transform hand2Target;
     public static Player Instance;
     public GameObject hat;
+    private AudioSource audioSource;
+    public AudioClip stepSound;
+    public AudioClip brainTrowSound;
+    public AudioClip bushSound;
+    public AudioClip changeWeapon;
     #endregion
     private void Awake()
     {
@@ -58,6 +63,7 @@ public class Player : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
         inventory = gameObject.GetComponent<Inventory>();
         tileGeneration = FindObjectOfType<TileGeneration>();
+        audioSource = gameObject.GetComponent<AudioSource>();
         if (Instance == null)
         {
             Instance = this;
@@ -123,7 +129,7 @@ public class Player : MonoBehaviour
             tileGeneration.spawnedBrains.Add(dropObject);
             dropObject.SetActive(true);
             Destroy(dropObject, 8f);
-            
+            audioSource.PlayOneShot(brainTrowSound);
              
             
             CheckCountBrains(objectToDrop);
@@ -148,13 +154,18 @@ public class Player : MonoBehaviour
 
         }
     }
-
+    public void PlayStepSound()
+    {
+        if (audioSource && stepSound && isGrounded)
+        {
+            audioSource.PlayOneShot(stepSound, 0.7f); 
+        }
+    }
     private void MovePlayer()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
         float dir = Input.GetAxisRaw("Horizontal");
         animator.SetBool("isMoving", Mathf.Abs(dir) > 0);
-
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
@@ -179,10 +190,6 @@ public class Player : MonoBehaviour
                     );
                 }
             }
-            //if (currentGun != null)
-            //{
-            //    currentGun.transform.localScale = new Vector3(scale.x, scale.x, scale.z);
-            //}
         }
 
         rb.velocity = new Vector2(dir * moveSpeed, rb.velocity.y);
@@ -199,12 +206,13 @@ public class Player : MonoBehaviour
         {
 
             rb.position = new Vector2(minPositionPlayer + 1f, transform.position.y);
-
+            audioSource.PlayOneShot(bushSound);
 
         }
         else if (transform.position.x > maxPositionPlayer)
         {
             rb.position = new Vector2(maxPositionPlayer - 1f, transform.position.y);
+            audioSource.PlayOneShot(bushSound);
         }
         if (transform.position.y < minPositionPlayerY)
         {
@@ -217,14 +225,15 @@ public class Player : MonoBehaviour
     private void ChangeWeapon(int weaponIndex)
     {
        
+                
         for (int i = 0; i < weapons.Count; i++)
         {
             if (weapons[i] != null)
             {
                 weapons[i].SetActive(i == weaponIndex);
-
                 if (i == weaponIndex)
                 {
+         
                     hand1Target = weapons[i].transform.Find("Hand1Gun");
                     hand2Target = weapons[i].transform.Find("Hand2Gun");
                 }
@@ -233,7 +242,7 @@ public class Player : MonoBehaviour
     }
     private void UpdateHandPositions()
     {
-
+       
         if (hand1Target != null)
         {
             hand1.position = hand1Target.position;
@@ -247,16 +256,19 @@ public class Player : MonoBehaviour
 
     private void ChooseWeapon()
     {
+      
         GameData data = SaveManager.Instance.LoadData();
         if (Input.GetKeyDown(KeyCode.Alpha1) && data.upgradeWeapons[0] >=1)
         {
-            isGun=true;
+            audioSource.PlayOneShot(changeWeapon);
+            isGun =true;
             isGarpun=false;
             ChangeWeapon(0);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2) && data.upgradeWeapons[1] >= 1)
         {
-            isGarpun=true;
+            audioSource.PlayOneShot(changeWeapon);
+            isGarpun =true;
             isGun=false;
             ChangeWeapon(1);
         }

@@ -12,6 +12,9 @@ public class CountKilledZombies : MonoBehaviour
     public GameObject endGamePanel;
     public Button endGameButton;
     public Text textInGamePanel;
+    private AudioSource audioSource;
+    public AudioClip endGameSound;
+    private bool isPlayed=false;
 
     private void Awake()
     {
@@ -20,12 +23,18 @@ public class CountKilledZombies : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else { Destroy(gameObject); }
+        else 
+        {
+            Destroy(Instance.gameObject);
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
 
     }
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         if (endGamePanel != null)
         {
             endGamePanel.SetActive(false);
@@ -63,6 +72,12 @@ public class CountKilledZombies : MonoBehaviour
         {
             if (endGamePanel != null)
             {
+                if(!audioSource.isPlaying && !isPlayed)
+                {
+                    Cursor.visible = true;
+                    audioSource.PlayOneShot(endGameSound);
+                    isPlayed = true;
+                }
                 endGamePanel.SetActive(true);
             }
 
