@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Shot : MonoBehaviour
 {
-    [SerializeField] private GameObject bulletPref;
+    [SerializeField] private Bullet bulletPref;
     [SerializeField] private Transform firePosition;
     [SerializeField] private Transform aimTransform;
     private float speedBullet;
@@ -11,14 +11,14 @@ public class Shot : MonoBehaviour
     private float nextShoot = 0f;
     AimController aimController;
     Player player;
-    public GameObject arrow;
+    public Arrow arrow;
     public GameObject garpun;
     private float speedArrow;
     private LineRenderer lineRenderer;
     public Transform startPosition;
 
     public bool isFire;
-    public GameObject arrowPref;
+    public Arrow arrowPref;
     public GameObject spawnPosition;
     private AudioSource audioSource;
 
@@ -85,26 +85,32 @@ public class Shot : MonoBehaviour
             case 1:
                 speedBullet = 6f;
                 shootTime = 4f;
+                bulletPref.liveTimeBullet = 0.5f;
                 break;
             case 2:
                 speedBullet = 8f;
                 shootTime = 3f;
+                bulletPref.liveTimeBullet = 0.7f;
                 break;
             case 3:
                 speedBullet = 10f;
                 shootTime = 2f;
+                bulletPref.liveTimeBullet = 0.85f;
                 break;
         }
         switch (data.upgradeWeapons[1])
         {
             case 1:
                 speedArrow = 8f;
+                arrowPref.liveTimeBullet = 0.5f;
                 break;
             case 2:
                 speedArrow = 10f;
+                arrowPref.liveTimeBullet = 0.6f;
                 break;
             case 3:
                 speedArrow = 12f;
+                arrowPref.liveTimeBullet = 0.8f;
                 break;
         }
 
@@ -113,7 +119,7 @@ public class Shot : MonoBehaviour
     private void ShootGun()
     {
         isFire = true;
-        GameObject bullet = Instantiate(bulletPref, firePosition.position, Quaternion.identity);
+        GameObject bullet = Instantiate(bulletPref.gameObject, firePosition.position, Quaternion.identity);
         Vector3 direction = (aimTransform.position - firePosition.position).normalized;
 
         Rigidbody2D rb2D = bullet.GetComponent<Rigidbody2D>();
@@ -125,6 +131,7 @@ public class Shot : MonoBehaviour
     {
         isFire = true;
         arrow.transform.SetParent(null);
+        arrow.StartShot();
         Vector3 direction = (aimTransform.position - firePosition.position).normalized;
         Rigidbody2D rb = arrow.GetComponent<Rigidbody2D>();
         rb.velocity = direction * speedArrow;
@@ -142,7 +149,7 @@ public class Shot : MonoBehaviour
             if (arrow == null)
             {
                 Vector3 direction = (aimTransform.position - garpun.transform.position).normalized;
-                arrow = Instantiate(arrowPref, spawnPosition.transform.position, Quaternion.identity);
+                arrow = Instantiate(arrowPref.gameObject, spawnPosition.transform.position, Quaternion.identity).GetComponent<Arrow>();
                 arrow.transform.SetParent(garpun.transform);
                 arrow.transform.right = direction;
 

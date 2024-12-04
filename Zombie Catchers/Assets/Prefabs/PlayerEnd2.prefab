@@ -1094,14 +1094,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b888eaa6283efd5449eee67a3f845a25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPref: {fileID: 4557990507036275789, guid: 3c2f267cd202674468b7ff8a8fb293a4, type: 3}
+  bulletPref: {fileID: 7629940808766591488, guid: 3c2f267cd202674468b7ff8a8fb293a4, type: 3}
   firePosition: {fileID: 2476299786820161964}
   aimTransform: {fileID: 0}
-  arrow: {fileID: 261776860573581104}
+  arrow: {fileID: 6314222214180114698}
   garpun: {fileID: 4097558024942149304}
   startPosition: {fileID: 6763735554968009950}
   isFire: 0
-  arrowPref: {fileID: 4733488136054995368, guid: 906ca6d7ab9e2e84683ded1be280b896, type: 3}
+  arrowPref: {fileID: -1314670647808386858, guid: 906ca6d7ab9e2e84683ded1be280b896, type: 3}
   spawnPosition: {fileID: 5298563797143281803}
   shotGarpunSound: {fileID: 8300000, guid: 251a5537aea0d874ebad590f679e7f1d, type: 3}
   shotGunSound: {fileID: 8300000, guid: 8d6358a81d0019a45b2796e61e572d9a, type: 3}
@@ -1537,11 +1537,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 52e1fdcf168622642b8a4e5b1aa3e01c, type: 3}
---- !u!1 &261776860573581104 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7092199747728843577, guid: 52e1fdcf168622642b8a4e5b1aa3e01c, type: 3}
-  m_PrefabInstance: {fileID: 7047722967741602825}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2888331853607012059 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5322093908546067154, guid: 52e1fdcf168622642b8a4e5b1aa3e01c, type: 3}
@@ -1557,6 +1552,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2902232416412368002, guid: 52e1fdcf168622642b8a4e5b1aa3e01c, type: 3}
   m_PrefabInstance: {fileID: 7047722967741602825}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6314222214180114698 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3922095503588691203, guid: 52e1fdcf168622642b8a4e5b1aa3e01c, type: 3}
+  m_PrefabInstance: {fileID: 7047722967741602825}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5b7a6076e488ea46932a508a86a45d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &6763735554968009950 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4328829041954365655, guid: 52e1fdcf168622642b8a4e5b1aa3e01c, type: 3}

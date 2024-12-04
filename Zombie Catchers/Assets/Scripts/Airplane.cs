@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Airplane : MonoBehaviour
 {
@@ -43,6 +44,8 @@ public class Airplane : MonoBehaviour
     public Transform endPosition;
     private bool isMovingToTarget = true;
     private bool isReturning = false;
+    private List<Transform> deadZombies = new List<Transform>();
+
     private enum AirplaneState
     {
         Idle,
@@ -116,6 +119,7 @@ public class Airplane : MonoBehaviour
     }
     private void UnScaleAirplain()
     {
+
         if (isScaling)
         {
             airplanePrefab.transform.localScale = Vector3.Lerp(airplanePrefab.transform.localScale, originalScale, Time.deltaTime * scaleSpeed);
@@ -133,6 +137,7 @@ public class Airplane : MonoBehaviour
                 isMovingToTarget = true;
                 animator.SetBool("loweringHook", true);
                 InstantiateHook();
+
             }
         }
 
@@ -148,13 +153,13 @@ public class Airplane : MonoBehaviour
     }
     private void DrawLine()
     {
-        if(lineRenderer != null)
+        if (lineRenderer != null)
         {
             lineRenderer.positionCount = 2;
-        lineRenderer.SetPositions(new Vector3[] { startPosition.position, currentHook.transform.position });
+            lineRenderer.SetPositions(new Vector3[] { startPosition.position, currentHook.transform.position });
         }
 
-   
+
     }
     public void GetPositionDeadZombie(Transform zombiePosition)
     {
@@ -164,42 +169,85 @@ public class Airplane : MonoBehaviour
             hookTarget = zombiePosition;
             currentState = AirplaneState.MovingToZombie;
             StopFollowingPlayer();
+           
         }
+    }
+    public void AddDeadZombieToList(Transform zombie)
+    {
+        deadZombies.Add(zombie);     
+    }
+    private void ReturnToIdleState()
+    {
+        currentState = AirplaneState.Idle;
+        isScaling = true;
+        ScaleAirplain();
+        hookLayer.SetActive(true);
+        lineLayer.SetActive(true);
+        isReturning = false;
+        lineRenderer.positionCount = 0;
+        Destroy(currentHook);
+        //currentZombieIndex = 0; 
     }
     private void MoveHook()
     {
         if (currentHook == null) return;
-        DrawLine();     
-        if (isMovingToTarget)
+
+        DrawLine();
+        if (hookTarget != null)
         {
-            currentHook.transform.position = Vector3.MoveTowards(currentHook.transform.position, hookTarget.position, hookSpeed * Time.deltaTime);
-            if (Vector3.Distance(currentHook.transform.position, hookTarget.position) < 0.1f)
+            if (isMovingToTarget)
             {
+                currentHook.transform.position = Vector3.MoveTowards(currentHook.transform.position, hookTarget.position, hookSpeed * Time.deltaTime);
 
-           
-                isMovingToTarget = false;
-                isReturning = true;
+                if (Vector3.Distance(currentHook.transform.position, hookTarget.position) < 0.1f)
+                {
+                    isMovingToTarget = false;
+                    isReturning = true;
 
+                    if (hookTarget.CompareTag("Zombie"))
+                    {
+                        hookTarget.SetParent(currentHook.transform);
+                        hookTarget.GetComponent<Rigidbody2D>().isKinematic = true;
+                    }
+                    else
+                    {
+                        ReturnState();
+                    }
+                }
+            }
+            else if (isReturning)
+            {
+                currentHook.transform.position = Vector3.MoveTowards(currentHook.transform.position, startPosition.position, hookSpeed * Time.deltaTime);
+
+                if (Vector3.Distance(currentHook.transform.position, startPosition.position) < 0.1f)
+                {
+                    isReturning = false;
+                    lineRenderer.positionCount = 0;
+                    hookLayer.SetActive(true);
+                    lineLayer.SetActive(true);
+                    currentState = AirplaneState.Idle;
+                    Destroy(currentHook);
+                    isScaling = true;
+                    ScaleAirplain();
+                    animator.SetBool("loweringHook", false);
+                }
             }
         }
-        else if (isReturning)
+        else
         {
-            currentHook.transform.position = Vector3.MoveTowards(currentHook.transform.position, startPosition.position, hookSpeed* Time.deltaTime);
-            if (Vector3.Distance(currentHook.transform.position, startPosition.position) < 0.1f)
-            {
-                isReturning= false;
-                lineRenderer.positionCount = 0;
-                hookLayer.SetActive(true);
-                lineLayer.SetActive(true);
-                currentState = AirplaneState.Idle;
-                Destroy(currentHook);
-                isScaling = true;
-                ScaleAirplain();
-                animator.SetBool("loweringHook", false);
-            }
+            ReturnState();
         }
-
- 
+    }
+    private void ReturnState()
+    {
+        currentState = AirplaneState.Idle;
+        isScaling = true;
+        ScaleAirplain();
+        hookLayer.SetActive(true);
+        lineLayer.SetActive(true);
+        isReturning = false;
+        lineRenderer.positionCount = 0;
+        Destroy(currentHook);
     }
     private void PlayMoveSound()
     {
@@ -267,7 +315,6 @@ public class Airplane : MonoBehaviour
             }
         }
     }
-
     private void FollowThePlayer()
     {
         if (currentState != AirplaneState.Idle) return;
@@ -277,7 +324,6 @@ public class Airplane : MonoBehaviour
             Mathf.Lerp(transform.position.y, hit.point.y + flightHeigth, upSpeed * Time.deltaTime), transform.position.z);
         isMoving = Vector3.Distance(transform.position, previousPosition) > 0.001f;
     }
-
     private void AttachedPlayerToAirplain()
     {
         player.transform.SetParent(airplanePrefab.transform);

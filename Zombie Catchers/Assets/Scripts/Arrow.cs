@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Arrow : MonoBehaviour
+public class Arrow : Bullet
 {
     private Shot shot;
-    void Start()
+    protected override void Start()
     {
-        
         shot = GetComponentInParent<Shot>();
+       
+    }
+    public void StartShot()
+    {
+        Destroy(gameObject, liveTimeBullet);
     }
 
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    public override void OnTriggerEnter2D(Collider2D collision)
     {
 
         if (shot.isFire)
@@ -23,10 +26,11 @@ public class Arrow : MonoBehaviour
                 if (!zombie.IsDead())
                 {
                     zombie.Die();
+           
                 }
 
             }
-            if (collision.CompareTag("Target") || collision.CompareTag("Ground"))
+            if (collision.CompareTag("Ground"))
             {
 
                 Destroy(gameObject);

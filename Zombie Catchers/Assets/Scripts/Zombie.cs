@@ -89,6 +89,7 @@ public class Zombie : MonoBehaviour
         capsuleCollider.size = new Vector2(0.3f, 1f);
         Airplane airPlane = FindObjectOfType<Airplane>();
         airPlane.GetPositionDeadZombie(this.transform);
+        //airPlane.AddDeadZombieToList(this.transform);
 
     }
     private Transform CheckClosesPoint()
