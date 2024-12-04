@@ -41,6 +41,8 @@ public class Airplane : MonoBehaviour
     public GameObject hookLayer;
     public GameObject lineLayer;
     public Transform endPosition;
+    private bool isMovingToTarget = true;
+    private bool isReturning = false;
     private enum AirplaneState
     {
         Idle,
@@ -122,12 +124,14 @@ public class Airplane : MonoBehaviour
             rb.velocity = new Vector2(0, directionToTarget.y * scaleSpeed);
             if (Vector3.Distance(airplanePrefab.transform.localScale, originalScale) < 0.9f)
             {
-                airplanePrefab.transform.localScale = originalScale;
+                //airplanePrefab.transform.localScale = originalScale;
                 //airplanePrefab.transform.position = targetPositionOffset;
                 rb.velocity = Vector2.zero;
                 isScaling = false;
                 currentState = AirplaneState.GoHook;
                 isHookMoving = true;
+                isMovingToTarget = true;
+                animator.SetBool("loweringHook", true);
                 InstantiateHook();
             }
         }
@@ -144,8 +148,13 @@ public class Airplane : MonoBehaviour
     }
     private void DrawLine()
     {
+        if(lineRenderer != null)
+        {
+            lineRenderer.positionCount = 2;
         lineRenderer.SetPositions(new Vector3[] { startPosition.position, currentHook.transform.position });
+        }
 
+   
     }
     public void GetPositionDeadZombie(Transform zombiePosition)
     {
@@ -160,18 +169,37 @@ public class Airplane : MonoBehaviour
     private void MoveHook()
     {
         if (currentHook == null) return;
-
-        currentHook.transform.position = Vector3.MoveTowards(currentHook.transform.position, hookTarget.position, hookSpeed * Time.deltaTime);
-        if (Vector3.Distance(currentHook.transform.position, hookTarget.position) < 0.1f)
+        DrawLine();     
+        if (isMovingToTarget)
         {
-       
-            isHookMoving = false;
-            hookLayer.SetActive(true);
-            lineLayer.SetActive(true);
-            currentState = AirplaneState.Idle;
+            currentHook.transform.position = Vector3.MoveTowards(currentHook.transform.position, hookTarget.position, hookSpeed * Time.deltaTime);
+            if (Vector3.Distance(currentHook.transform.position, hookTarget.position) < 0.1f)
+            {
 
+           
+                isMovingToTarget = false;
+                isReturning = true;
+
+            }
         }
-        DrawLine();
+        else if (isReturning)
+        {
+            currentHook.transform.position = Vector3.MoveTowards(currentHook.transform.position, startPosition.position, hookSpeed* Time.deltaTime);
+            if (Vector3.Distance(currentHook.transform.position, startPosition.position) < 0.1f)
+            {
+                isReturning= false;
+                lineRenderer.positionCount = 0;
+                hookLayer.SetActive(true);
+                lineLayer.SetActive(true);
+                currentState = AirplaneState.Idle;
+                Destroy(currentHook);
+                isScaling = true;
+                ScaleAirplain();
+                animator.SetBool("loweringHook", false);
+            }
+        }
+
+ 
     }
     private void PlayMoveSound()
     {
@@ -196,14 +224,14 @@ public class Airplane : MonoBehaviour
     }
     private void MoveAirplaneToDeadZombie()
     {
-        if (Vector3.Distance(new Vector3(airplanePrefab.transform.position.x, 0, 0), new Vector3(hookTarget.position.x+1.1f, 0, 0)) > stopThreshold)
+        if (Vector3.Distance(new Vector3(airplanePrefab.transform.position.x, 0, 0), new Vector3(hookTarget.position.x + 1.1f, 0, 0)) > stopThreshold)
         {
-            airplanePrefab.transform.position = new Vector3(Mathf.MoveTowards(airplanePrefab.transform.position.x, hookTarget.position.x+1.1f, moveSpeed * Time.deltaTime),
+            airplanePrefab.transform.position = new Vector3(Mathf.MoveTowards(airplanePrefab.transform.position.x, hookTarget.position.x + 1.1f, moveSpeed * Time.deltaTime),
                 airplanePrefab.transform.position.y, airplanePrefab.transform.position.z);
         }
         else
         {
-    
+
             currentState = AirplaneState.Unscaling;
             isScaling = true;
         }
