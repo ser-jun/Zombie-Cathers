@@ -1069,7 +1069,7 @@ MonoBehaviour:
   dropPosition: {fileID: 6876496657406433123}
   currentGun: {fileID: 3249986998495534983}
   tileGeneration: {fileID: 0}
-  airplane: {fileID: 823761591297427633, guid: 62dd96f55664f8149951ef05f6c3e377, type: 3}
+  airplane: {fileID: 8195403170710818416, guid: 4999f5a38803f344498a21a9cf1c1e37, type: 3}
   weapons:
   - {fileID: 5188797046073274728}
   - {fileID: 4097558024942149304}

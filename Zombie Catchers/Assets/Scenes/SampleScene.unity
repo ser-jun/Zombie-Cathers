@@ -2585,7 +2585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 3459838044358346843, guid: 6caa50dfbdd22c94282382ea76009a92, type: 3}
-  airplanePrefab: {fileID: 823761591297427633, guid: 62dd96f55664f8149951ef05f6c3e377, type: 3}
+  airplanePrefab: {fileID: 8195403170710818416, guid: 4999f5a38803f344498a21a9cf1c1e37, type: 3}
   aimController: {fileID: 1509887209}
   isSpawned: 0
 --- !u!4 &1110026321

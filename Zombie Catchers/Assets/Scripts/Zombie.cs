@@ -87,6 +87,8 @@ public class Zombie : MonoBehaviour
         GenerateCoins();
         rb.freezeRotation = false;
         capsuleCollider.size = new Vector2(0.3f, 1f);
+        Airplane airPlane = FindObjectOfType<Airplane>();
+        airPlane.GetPositionDeadZombie(this.transform);
 
     }
     private Transform CheckClosesPoint()
