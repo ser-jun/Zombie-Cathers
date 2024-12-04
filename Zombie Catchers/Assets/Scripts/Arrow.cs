@@ -5,6 +5,8 @@ using UnityEngine;
 public class Arrow : Bullet
 {
     private Shot shot;
+    private int zombieCollisionCount = 0;
+    public int maxCountCollision;
     protected override void Start()
     {
         shot = GetComponentInParent<Shot>();
@@ -26,6 +28,11 @@ public class Arrow : Bullet
                 if (!zombie.IsDead())
                 {
                     zombie.Die();
+                    zombieCollisionCount++;
+                    if (zombieCollisionCount == maxCountCollision)
+                    {
+                        Destroy(gameObject);
+                    }
            
                 }
 

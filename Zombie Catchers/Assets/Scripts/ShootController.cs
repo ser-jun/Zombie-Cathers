@@ -90,27 +90,30 @@ public class Shot : MonoBehaviour
             case 2:
                 speedBullet = 8f;
                 shootTime = 3f;
-                bulletPref.liveTimeBullet = 0.7f;
+                bulletPref.liveTimeBullet = 0.6f;
                 break;
             case 3:
                 speedBullet = 10f;
                 shootTime = 2f;
-                bulletPref.liveTimeBullet = 0.85f;
+                bulletPref.liveTimeBullet = 0.7f;
                 break;
         }
         switch (data.upgradeWeapons[1])
         {
             case 1:
                 speedArrow = 8f;
-                arrowPref.liveTimeBullet = 0.5f;
+                arrowPref.liveTimeBullet = 0.35f;
+                arrowPref.maxCountCollision = 1;
                 break;
             case 2:
                 speedArrow = 10f;
-                arrowPref.liveTimeBullet = 0.6f;
+                arrowPref.liveTimeBullet = 0.4f;
+                arrowPref.maxCountCollision = 2;
                 break;
             case 3:
                 speedArrow = 12f;
-                arrowPref.liveTimeBullet = 0.8f;
+                arrowPref.liveTimeBullet = 0.55f;
+                arrowPref.maxCountCollision = 2;
                 break;
         }
 
@@ -129,8 +132,9 @@ public class Shot : MonoBehaviour
 
     private void ShootGarpun()
     {
+        if (arrow ==null) { CreateNewArrow(); }
         isFire = true;
-        arrow.transform.SetParent(null);
+        arrow.transform.SetParent(null);    
         arrow.StartShot();
         Vector3 direction = (aimTransform.position - firePosition.position).normalized;
         Rigidbody2D rb = arrow.GetComponent<Rigidbody2D>();
@@ -148,12 +152,21 @@ public class Shot : MonoBehaviour
             lineRenderer.SetPositions(new Vector3[] { Vector3.zero, Vector3.zero });
             if (arrow == null)
             {
-                Vector3 direction = (aimTransform.position - garpun.transform.position).normalized;
-                arrow = Instantiate(arrowPref.gameObject, spawnPosition.transform.position, Quaternion.identity).GetComponent<Arrow>();
-                arrow.transform.SetParent(garpun.transform);
-                arrow.transform.right = direction;
+                //Vector3 direction = (aimTransform.position - garpun.transform.position).normalized;
+                //arrow = Instantiate(arrowPref.gameObject, spawnPosition.transform.position, Quaternion.identity).GetComponent<Arrow>();
+                //arrow.transform.SetParent(garpun.transform);
+                //arrow.transform.right = direction;
+                CreateNewArrow();
 
             }
         }
     }
+    private void CreateNewArrow()
+    {
+        Vector3 direction = (aimTransform.position - garpun.transform.position).normalized;
+        arrow = Instantiate(arrowPref.gameObject, spawnPosition.transform.position, Quaternion.identity).GetComponent<Arrow>();
+        arrow.transform.SetParent(garpun.transform);
+        arrow.transform.right = direction;
+    }
+
 }

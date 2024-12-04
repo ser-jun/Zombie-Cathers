@@ -1,5 +1,6 @@
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Airplane : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class Airplane : MonoBehaviour
     private float moveSpeed = 6f;
     private float moveOnY = 0.5f;
     private Rigidbody2D rb;
+    private BoxCollider2D boxCollider;
     Player player;
     private bool isPlayerAttached = true;
     private float targetX = -10f;
@@ -31,13 +33,19 @@ public class Airplane : MonoBehaviour
     private bool isPlayed = false;
     private bool isPlayedSvaling = false;
     public AudioClip scaleAirplaneSound;
+    public AudioClip hookUp;
+    public AudioClip hookDown;
+
+    private bool isHookDownSoundPlayed = false;
+    private bool isHookUpSoundPlayed = false;
+
 
     private LineRenderer lineRenderer;
     public GameObject hookPrefab;
     public Transform startPosition;
     private bool isHookMoving = false;
     private Transform hookTarget;
-    private float hookSpeed = 5f;
+    private float hookSpeed = 9f;
     private GameObject currentHook;
     public GameObject hookLayer;
     public GameObject lineLayer;
@@ -46,6 +54,9 @@ public class Airplane : MonoBehaviour
     private bool isReturning = false;
     private List<Transform> deadZombies = new List<Transform>();
 
+    [SerializeField] private List<Transform> slots = new List<Transform>();
+    private List<Transform> occupiedSlots = new List<Transform>();
+    public Transform bone;
     private enum AirplaneState
     {
         Idle,
@@ -58,19 +69,29 @@ public class Airplane : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         player = FindObjectOfType<Player>();
+        boxCollider = GetComponent<BoxCollider2D>();
         audioSource = gameObject.GetComponent<AudioSource>();
         originalScale = airplanePrefab.transform.localScale;
         targetScale = originalScale * 0.5f;
         targetPositionOffset = airplanePrefab.transform.position + new Vector3(0, -2f, 0);
         animator = GetComponent<Animator>();
-
+        //zombieContainer = airplanePrefab.transform.Find("ZombieContainer");
+        //if (zombieContainer == null)
+        //{
+        //    zombieContainer = new GameObject("ZombieContainer").transform;
+        //    zombieContainer.SetParent(bone);
+        //    zombieContainer.localPosition = new Vector3(0, -0.5f, 0);
+        //}
         lineRenderer = airplanePrefab.GetComponent<LineRenderer>();
         lineRenderer.positionCount = 2;
         lineRenderer.startWidth = 0.08f;
         lineRenderer.endWidth = 0.08f;
         lineRenderer.startColor = Color.magenta;
         lineRenderer.endColor = Color.magenta;
-
+        //foreach (Transform child in zombieContainer)
+        //{
+        //    slots.Add(child);
+        //}
         AttachedPlayerToAirplain();
     }
 
@@ -163,31 +184,54 @@ public class Airplane : MonoBehaviour
     }
     public void GetPositionDeadZombie(Transform zombiePosition)
     {
-        if (currentState == AirplaneState.Idle)
-        {
 
-            hookTarget = zombiePosition;
+        //if (currentState == AirplaneState.Idle)
+        //{
+
+        AddDeadZombieToList(zombiePosition);
+
+        if (deadZombies.Count > 0)
+        {
+            hookTarget = deadZombies[0];
             currentState = AirplaneState.MovingToZombie;
             StopFollowingPlayer();
-           
         }
+        //}
+        //currentIndexList++;
     }
+
     public void AddDeadZombieToList(Transform zombie)
     {
-        deadZombies.Add(zombie);     
+        deadZombies.Add(zombie);
     }
-    private void ReturnToIdleState()
+    private void RemoveZombieFromList(Transform zombie)
     {
-        currentState = AirplaneState.Idle;
-        isScaling = true;
-        ScaleAirplain();
-        hookLayer.SetActive(true);
-        lineLayer.SetActive(true);
-        isReturning = false;
-        lineRenderer.positionCount = 0;
-        Destroy(currentHook);
-        //currentZombieIndex = 0; 
+        if (deadZombies.Contains(zombie))
+        {
+            deadZombies.Remove(zombie);
+        }
     }
+
+    private void PlaceZombieInAirplane(Transform zombie)
+    {
+        Transform freeSlot = slots.Find(slot => !occupiedSlots.Contains(slot));
+
+        if (freeSlot != null)
+        {
+            zombie.SetParent(freeSlot);
+            zombie.localPosition = Vector3.zero;
+            occupiedSlots.Add(freeSlot);
+            Rigidbody2D rb = zombie.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+                rb.velocity = Vector2.zero;
+            }
+            StartCoroutine(ScaleZombieSmoothly(zombie, zombie.localScale * 0.9f, 0.5f));
+        }
+    }
+
+
     private void MoveHook()
     {
         if (currentHook == null) return;
@@ -198,6 +242,12 @@ public class Airplane : MonoBehaviour
             if (isMovingToTarget)
             {
                 currentHook.transform.position = Vector3.MoveTowards(currentHook.transform.position, hookTarget.position, hookSpeed * Time.deltaTime);
+
+                if (!isHookDownSoundPlayed)
+                {
+                    audioSource.PlayOneShot(hookDown);
+                    isHookDownSoundPlayed = true;
+                }
 
                 if (Vector3.Distance(currentHook.transform.position, hookTarget.position) < 0.1f)
                 {
@@ -219,6 +269,12 @@ public class Airplane : MonoBehaviour
             {
                 currentHook.transform.position = Vector3.MoveTowards(currentHook.transform.position, startPosition.position, hookSpeed * Time.deltaTime);
 
+                if (!isHookUpSoundPlayed)
+                {
+                    audioSource.PlayOneShot(hookUp);
+                    isHookUpSoundPlayed = true;
+                }
+
                 if (Vector3.Distance(currentHook.transform.position, startPosition.position) < 0.1f)
                 {
                     isReturning = false;
@@ -226,10 +282,30 @@ public class Airplane : MonoBehaviour
                     hookLayer.SetActive(true);
                     lineLayer.SetActive(true);
                     currentState = AirplaneState.Idle;
-                    Destroy(currentHook);
-                    isScaling = true;
-                    ScaleAirplain();
-                    animator.SetBool("loweringHook", false);
+                    PlaceZombieInAirplane(hookTarget);
+                    CapsuleCollider2D zombieCollider = hookTarget.GetComponent<CapsuleCollider2D>();
+                    zombieCollider.enabled = false;
+                    RemoveZombieFromList(hookTarget);
+
+                    isHookDownSoundPlayed = false;
+                    isHookUpSoundPlayed = false;
+
+                    if (deadZombies.Count > 0)
+                    {
+                        hookTarget = deadZombies[0];
+                        Destroy(currentHook);
+                        ScaleAirplain();
+                        animator.SetBool("loweringHook", false);
+                        currentState = AirplaneState.MovingToZombie;
+                    }
+                    else
+                    {
+                        isScaling = true;
+                        ScaleAirplain();
+                        Destroy(currentHook);
+                        ScaleAirplain();
+                        animator.SetBool("loweringHook", false);
+                    }
                 }
             }
         }
@@ -238,6 +314,7 @@ public class Airplane : MonoBehaviour
             ReturnState();
         }
     }
+
     private void ReturnState()
     {
         currentState = AirplaneState.Idle;
@@ -272,6 +349,10 @@ public class Airplane : MonoBehaviour
     }
     private void MoveAirplaneToDeadZombie()
     {
+        if (hookTarget == null)
+        {
+            ReturnState();
+        }
         if (Vector3.Distance(new Vector3(airplanePrefab.transform.position.x, 0, 0), new Vector3(hookTarget.position.x + 1.1f, 0, 0)) > stopThreshold)
         {
             airplanePrefab.transform.position = new Vector3(Mathf.MoveTowards(airplanePrefab.transform.position.x, hookTarget.position.x + 1.1f, moveSpeed * Time.deltaTime),
@@ -289,6 +370,20 @@ public class Airplane : MonoBehaviour
         isPlayerAttached = false;
         isMoving = false;
     }
+    private IEnumerator ScaleZombieSmoothly(Transform zombie, Vector3 targetScale, float duration)
+    {
+        Vector3 initialScale = zombie.localScale;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            zombie.localScale = Vector3.Lerp(initialScale, targetScale, elapsedTime / duration);
+            yield return null;
+        }
+        zombie.localScale = targetScale;
+    }
+
     private void ScaleAirplain()
     {
 
@@ -326,7 +421,9 @@ public class Airplane : MonoBehaviour
     }
     private void AttachedPlayerToAirplain()
     {
-        player.transform.SetParent(airplanePrefab.transform);
+        //player.transform.SetParent(airplanePrefab.transform);
+        player.transform.SetParent(bone);
+        //player.transform.SetParent(slots[0]);
         player.rb.isKinematic = true;
         player.rb.constraints = RigidbodyConstraints2D.FreezeAll;
         player.rb.gravityScale = 0;

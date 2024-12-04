@@ -21,8 +21,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float groundCheckDistance = 1.2f;
     private float maxJumpForce = 12f;
-    private float minPositionCamera = -15;
-    private float maxPositionCamera = 61;
+    private float minPositionCamera = -14;
+    private float maxPositionCamera = 59;
     private float minPositionPlayer = -24;
     private float maxPositionPlayer = 70;
     private float minPositionPlayerY = -4f;
@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     [SerializeField] private TileGeneration tileGeneration;
 
     public GameObject airplane;
- 
+
     AimController aimController;
     private float throwForce = 7f;
 
@@ -78,6 +78,8 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        isGun = true;
+        isGarpun = false;
         PutHat();
         ChangeWeapon(0);
     }

@@ -37,6 +37,7 @@ public class Zombie : MonoBehaviour
     private bool hasPlayed=false;
     public AudioClip eatingBrainSound;
     public AudioClip dieZombieSound;
+    private float minY = -5f;
     #endregion
     private void Start()
     {
@@ -62,6 +63,7 @@ public class Zombie : MonoBehaviour
             MoveZombie(target);
 
         }
+        CheckPositionLimit();
         DestroyZombies();
         CountKilledZombies.Instance.UpdateKillCount();
     }
@@ -89,7 +91,7 @@ public class Zombie : MonoBehaviour
         capsuleCollider.size = new Vector2(0.3f, 1f);
         Airplane airPlane = FindObjectOfType<Airplane>();
         airPlane.GetPositionDeadZombie(this.transform);
-        //airPlane.AddDeadZombieToList(this.transform);
+        
 
     }
     private Transform CheckClosesPoint()
@@ -147,12 +149,28 @@ public class Zombie : MonoBehaviour
     }
     private void DestroyZombies()
     {
-        if (transform.position.y < -4.4f)
+        if (transform.position.y < -3f && !isDead)
         {
             Destroy(gameObject);
             tileGeneration.countZombies--;
         }
     }
+    private void CheckPositionLimit()
+    {
+        if (transform.position.y < minY && isDead)
+        {
+            Vector3 newPosition = transform.position;
+            newPosition.y = minY;
+            transform.position = newPosition;
+
+            // Останавливаем падение, если есть Rigidbody2D
+            if (rb != null)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, 0);
+            }
+        }
+    }
+
     private void DrawRaycast(Vector2 direction)
     {
         isGrounted = Physics2D.Raycast(transform.position, Vector2.down, distanceToGround, groundLayer);
