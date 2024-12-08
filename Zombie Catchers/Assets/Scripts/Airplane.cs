@@ -75,23 +75,12 @@ public class Airplane : MonoBehaviour
         targetScale = originalScale * 0.5f;
         targetPositionOffset = airplanePrefab.transform.position + new Vector3(0, -2f, 0);
         animator = GetComponent<Animator>();
-        //zombieContainer = airplanePrefab.transform.Find("ZombieContainer");
-        //if (zombieContainer == null)
-        //{
-        //    zombieContainer = new GameObject("ZombieContainer").transform;
-        //    zombieContainer.SetParent(bone);
-        //    zombieContainer.localPosition = new Vector3(0, -0.5f, 0);
-        //}
         lineRenderer = airplanePrefab.GetComponent<LineRenderer>();
         lineRenderer.positionCount = 2;
         lineRenderer.startWidth = 0.08f;
         lineRenderer.endWidth = 0.08f;
         lineRenderer.startColor = Color.magenta;
         lineRenderer.endColor = Color.magenta;
-        //foreach (Transform child in zombieContainer)
-        //{
-        //    slots.Add(child);
-        //}
         AttachedPlayerToAirplain();
     }
 
@@ -149,8 +138,7 @@ public class Airplane : MonoBehaviour
             rb.velocity = new Vector2(0, directionToTarget.y * scaleSpeed);
             if (Vector3.Distance(airplanePrefab.transform.localScale, originalScale) < 0.9f)
             {
-                //airplanePrefab.transform.localScale = originalScale;
-                //airplanePrefab.transform.position = targetPositionOffset;
+
                 rb.velocity = Vector2.zero;
                 isScaling = false;
                 currentState = AirplaneState.GoHook;
@@ -184,10 +172,6 @@ public class Airplane : MonoBehaviour
     }
     public void GetPositionDeadZombie(Transform zombiePosition)
     {
-
-        //if (currentState == AirplaneState.Idle)
-        //{
-
         AddDeadZombieToList(zombiePosition);
 
         if (deadZombies.Count > 0)
@@ -196,8 +180,7 @@ public class Airplane : MonoBehaviour
             currentState = AirplaneState.MovingToZombie;
             StopFollowingPlayer();
         }
-        //}
-        //currentIndexList++;
+
     }
 
     public void AddDeadZombieToList(Transform zombie)
@@ -257,7 +240,8 @@ public class Airplane : MonoBehaviour
                     if (hookTarget.CompareTag("Zombie"))
                     {
                         hookTarget.SetParent(currentHook.transform);
-                        hookTarget.GetComponent<Rigidbody2D>().isKinematic = true;
+                        //hookTarget.GetComponent<Rigidbody2D>().isKinematic = true;
+                        Destroy(hookTarget.GetComponent<Rigidbody2D>());
                     }
                     else
                     {
@@ -421,9 +405,7 @@ public class Airplane : MonoBehaviour
     }
     private void AttachedPlayerToAirplain()
     {
-        //player.transform.SetParent(airplanePrefab.transform);
         player.transform.SetParent(bone);
-        //player.transform.SetParent(slots[0]);
         player.rb.isKinematic = true;
         player.rb.constraints = RigidbodyConstraints2D.FreezeAll;
         player.rb.gravityScale = 0;

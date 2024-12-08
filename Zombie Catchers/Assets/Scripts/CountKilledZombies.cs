@@ -16,6 +16,8 @@ public class CountKilledZombies : MonoBehaviour
     public AudioClip endGameSound;
     private bool isPlayed=false;
 
+    
+
     private void Awake()
     {
         if (Instance == null)
@@ -49,8 +51,10 @@ public class CountKilledZombies : MonoBehaviour
                 if (endGamePanel != null) endGamePanel.SetActive(false);
             });
         }
+        
     }
      
+
     public void IncrementKillCount()
     {
         zombieKillCount++;

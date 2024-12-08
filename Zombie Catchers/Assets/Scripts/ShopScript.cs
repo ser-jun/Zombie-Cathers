@@ -8,6 +8,7 @@ public class ShopScript : MonoBehaviour
     public Button closeShopPanel;
 
     public Button buyGarpun;
+    public Button buyDartGunButton;
 
     public Button gunShopPanelButton;
     public Button closeGunShopPanel;
@@ -39,6 +40,10 @@ public class ShopScript : MonoBehaviour
     public AudioClip buySound;
     public AudioClip menuSound;
 
+    public GameObject exitGamePanel;
+    public Button continueButton;
+    public Button exitGameButton;
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();  
@@ -65,7 +70,8 @@ public class ShopScript : MonoBehaviour
             shopGunPanel.SetActive(false);
             audioSource.PlayOneShot(menuSound);
         });
-        buyGarpun.onClick.AddListener(() => BuyItem("upgradeWeapons", 1, 1500, buyGarpun));
+        buyGarpun.onClick.AddListener(() => BuyItem("upgradeWeapons", 1, 2000, buyGarpun));
+        buyDartGunButton.onClick.AddListener(() => BuyItem("upgradeWeapons", 2, 3500, buyDartGunButton));
 
         upgradeShopButtonOpen.onClick.AddListener(() =>
         {
@@ -109,7 +115,18 @@ public class ShopScript : MonoBehaviour
     private void Update()
     {
         CheckButtonState(1, upgradeGarpunButton);
-    }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+           
+            exitGamePanel.SetActive(true);
+            exitGameButton.onClick.AddListener(() => { Application.Quit(); });
+            continueButton.onClick.AddListener(() => {
+                exitGamePanel.SetActive(false);
+                Time.timeScale = 1f;
+            });
+
+        }
+    }   
 
     
    private void SellCap()

@@ -163,7 +163,6 @@ public class Zombie : MonoBehaviour
             newPosition.y = minY;
             transform.position = newPosition;
 
-            // Останавливаем падение, если есть Rigidbody2D
             if (rb != null)
             {
                 rb.velocity = new Vector2(rb.velocity.x, 0);

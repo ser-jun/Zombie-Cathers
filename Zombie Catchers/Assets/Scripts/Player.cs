@@ -274,7 +274,14 @@ public class Player : MonoBehaviour
             isGun=false;
             ChangeWeapon(1);
         }
-       
+        else if (Input.GetKeyDown(KeyCode.Alpha3) && data.upgradeWeapons[2] >= 1)
+        {
+            audioSource.PlayOneShot(changeWeapon);
+            isGarpun = false;
+            isGun = false;
+            ChangeWeapon(2);
+        }
+
     }
 
 }

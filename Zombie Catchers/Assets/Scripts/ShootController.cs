@@ -24,8 +24,12 @@ public class Shot : MonoBehaviour
 
     public AudioClip shotGarpunSound;
     public AudioClip shotGunSound;
+    public AudioClip shotGunMachine;
 
     public ParticleSystem particle;
+    public GameObject dartPref;
+    public Transform firePositionDart;
+    private float speedDart=10f;
 
     void Start()
     {
@@ -56,7 +60,7 @@ public class Shot : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && Time.time >= nextShoot && player.isGun)
         {
 
-            ShootGun();
+            ShootGun(bulletPref.transform, speedBullet, firePosition);
             nextShoot = Time.time + shootTime;
             
             audioSource.PlayOneShot(shotGunSound);
@@ -66,6 +70,12 @@ public class Shot : MonoBehaviour
 
             ShootGarpun();
             audioSource.PlayOneShot(shotGarpunSound);
+        }
+        else if (Input.GetMouseButtonDown(0) && !player.isGarpun && !player.isGun && Time.time >= nextShoot)
+        {
+            ShootGun(dartPref.transform, speedDart, firePositionDart);
+            nextShoot = Time.time + 0.5f;
+            audioSource.PlayOneShot(shotGunMachine);
         }
         if (isFire)
         {
@@ -119,15 +129,15 @@ public class Shot : MonoBehaviour
 
     }
 
-    private void ShootGun()
+    private void ShootGun(Transform prefab, float speed, Transform firePos)
     {
         isFire = true;
-        GameObject bullet = Instantiate(bulletPref.gameObject, firePosition.position, Quaternion.identity);
-        Vector3 direction = (aimTransform.position - firePosition.position).normalized;
+        GameObject bullet = Instantiate(prefab.gameObject, firePos.position, Quaternion.identity);
+        Vector3 direction = (aimTransform.position - firePos.position).normalized;
 
         Rigidbody2D rb2D = bullet.GetComponent<Rigidbody2D>();
 
-        rb2D.velocity = direction * speedBullet;
+        rb2D.velocity = direction * speed;
     }
 
     private void ShootGarpun()
@@ -140,6 +150,7 @@ public class Shot : MonoBehaviour
         Rigidbody2D rb = arrow.GetComponent<Rigidbody2D>();
         rb.velocity = direction * speedArrow;
     }
+
     private void DrawLine()
     {
         if (arrow != null)
@@ -152,12 +163,7 @@ public class Shot : MonoBehaviour
             lineRenderer.SetPositions(new Vector3[] { Vector3.zero, Vector3.zero });
             if (arrow == null)
             {
-                //Vector3 direction = (aimTransform.position - garpun.transform.position).normalized;
-                //arrow = Instantiate(arrowPref.gameObject, spawnPosition.transform.position, Quaternion.identity).GetComponent<Arrow>();
-                //arrow.transform.SetParent(garpun.transform);
-                //arrow.transform.right = direction;
                 CreateNewArrow();
-
             }
         }
     }

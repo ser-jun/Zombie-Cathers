@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class TileGeneration : MonoBehaviour
 {
     [SerializeField] public GameObject random;
@@ -30,6 +30,10 @@ public class TileGeneration : MonoBehaviour
     public AudioClip spawnZombieSound;
     public AudioClip backgroundSoundMusic;
 
+    public GameObject exitGamePanel;
+    public Button goMenuButton;
+    public Button exitGameButton;
+    public Button continueButton;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -47,7 +51,24 @@ public class TileGeneration : MonoBehaviour
     void Update()
     {
         BrainsHendler();
-  
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Time.timeScale = 0f;
+            exitGamePanel.SetActive(true);
+            goMenuButton.onClick.AddListener(() =>
+            {
+                SceneManager.LoadScene("Map");
+                exitGamePanel.SetActive(false);
+             
+            });
+            exitGameButton.onClick.AddListener(() => { Application.Quit(); });
+            continueButton.onClick.AddListener(() => {
+                exitGamePanel.SetActive(false);
+                Time.timeScale = 1f;
+            });
+    
+        }
+
     }
   
     private void UpdateCoinsCountUI()

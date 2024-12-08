@@ -294,7 +294,7 @@ MonoBehaviour:
   leftTarget: {fileID: 0}
   rightTarget: {fileID: 0}
   brainTransform: {fileID: 0}
-  maxDistacneToPlayer: 6.5
+  maxDistacneToPlayer: 7
   jumpForce: 5
   groundLayer:
     serializedVersion: 2
