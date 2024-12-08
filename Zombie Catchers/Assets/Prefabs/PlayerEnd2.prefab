@@ -1513,6 +1513,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GUN3
       objectReference: {fileID: 0}
+    - target: {fileID: -8653719598885068355, guid: 741876244065b9d41afd9353ae3c8fb9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: 741876244065b9d41afd9353ae3c8fb9, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.6
@@ -1573,6 +1577,18 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.28
       objectReference: {fileID: 0}
+    - target: {fileID: 2081451758625736595, guid: 741876244065b9d41afd9353ae3c8fb9, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2081451758625736595, guid: 741876244065b9d41afd9353ae3c8fb9, type: 3}
+      propertyPath: m_FlipY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2081451758625736595, guid: 741876244065b9d41afd9353ae3c8fb9, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -1631,7 +1647,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8653719598885068355, guid: 8bf1591806d5d0a45a4e6bd22724dc4b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: 8bf1591806d5d0a45a4e6bd22724dc4b, type: 3}
       propertyPath: m_LocalScale.x

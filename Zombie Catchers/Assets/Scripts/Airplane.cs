@@ -38,6 +38,7 @@ public class Airplane : MonoBehaviour
 
     private bool isHookDownSoundPlayed = false;
     private bool isHookUpSoundPlayed = false;
+    public bool IsPlayerAttached => isPlayerAttached;
 
 
     private LineRenderer lineRenderer;
@@ -410,17 +411,19 @@ public class Airplane : MonoBehaviour
         player.rb.constraints = RigidbodyConstraints2D.FreezeAll;
         player.rb.gravityScale = 0;
         isPlayerAttached = true;
-
+        player.SetIsOnAirplane(true);  
     }
-    private void UnattachPlayer()
+    public void UnattachPlayer()
     {
         player.transform.SetParent(null);
         player.rb.gravityScale = 1;
         player.rb.isKinematic = false;
         player.rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         isPlayerAttached = false;
+        player.SetIsOnAirplane(false);  
         GetComponent<BoxCollider2D>().enabled = false;
         isScaling = true;
         targetPositionOffset = airplanePrefab.transform.position + new Vector3(0, -3f, 0);
     }
+
 }

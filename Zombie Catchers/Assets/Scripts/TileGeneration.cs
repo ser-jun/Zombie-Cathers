@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class TileGeneration : MonoBehaviour
 {
     [SerializeField] public GameObject random;
-    [SerializeField] private GameObject zombiePref;
+    [SerializeField] private GameObject[] zombiePrefabs; 
     [SerializeField] private int maxObjectCount = 10;
     [SerializeField] private float radiusSpawnZombie = 1.5f;
     float radiusForSearchSpawnPlace = 1f;
@@ -117,13 +117,12 @@ public class TileGeneration : MonoBehaviour
         for (int i = 0; i < spawnObject.Count; i++)
         {
             GameObject spawn = spawnObject[i];
-            if (spawn == null || usedSpawnObjects.Contains(spawn)) continue; 
+            if (spawn == null || usedSpawnObjects.Contains(spawn)) continue;
 
             float distanceToBrain = Vector2.Distance(spawn.transform.position, brainTransform.position);
 
             if (distanceToBrain <= radiusSpawnZombie && CheckPositionPlayer(spawn.transform.position))
             {
-
                 bool zombieAlreadySpawnedNearby = usedSpawnObjects.Any(usedSpawn =>
                     usedSpawn != null && Vector2.Distance(usedSpawn.transform.position, spawn.transform.position) < radiusSpawnZombie);
 
@@ -132,17 +131,19 @@ public class TileGeneration : MonoBehaviour
                     Collider2D spawnPlaceCollider = Physics2D.OverlapCircle(spawn.transform.position, radiusForSearchSpawnPlace, LayerMask.GetMask("spawnPlace"));
                     if (spawnPlaceCollider != null && spawnPlaceCollider.CompareTag("spawnPlace"))
                     {
-                        usedSpawnObjects.Add(spawn); 
+                        usedSpawnObjects.Add(spawn);
 
-                        GameObject zombieObj = Instantiate(zombiePref, spawn.transform.position, Quaternion.identity);
+                        GameObject randomZombiePrefab = zombiePrefabs[Random.Range(0, zombiePrefabs.Length)];
+                        GameObject zombieObj = Instantiate(randomZombiePrefab, spawn.transform.position, Quaternion.identity);
                         audioSource.PlayOneShot(spawnZombieSound);
+
                         Zombie zombie = zombieObj.GetComponent<Zombie>();
                         zombie.brainTransform = brainTransform;
                         zombie.playerTransform = player.transform;
                         zombie.leftTarget = leftPoint;
                         zombie.rightTarget = rightPoint;
 
-                        toRemove.Add(spawn); 
+                        toRemove.Add(spawn);
                     }
                 }
             }
@@ -157,6 +158,7 @@ public class TileGeneration : MonoBehaviour
             }
         }
     }
+
 
     private bool CheckPositionPlayer(Vector2 brainPosition)
     {

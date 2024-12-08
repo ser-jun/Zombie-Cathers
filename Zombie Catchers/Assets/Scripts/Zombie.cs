@@ -190,10 +190,12 @@ public class Zombie : MonoBehaviour
     {
         if (direction.x != 0)
         {
-            Vector3 scale = transform.localScale;
-            scale.x = direction.x > 0 ? 1f : -1f;
-            transform.localScale = scale;
+            bool isFacingRight = direction.x > 0;
+            Vector3 rotation = transform.eulerAngles;
+            rotation.y = isFacingRight ? 0 : 180;
+            transform.eulerAngles = rotation;
         }
+
         if (isObstacle && isGrounted && canJump)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
@@ -210,6 +212,7 @@ public class Zombie : MonoBehaviour
         }
         canJump = true;
     }
+
     private void EatingBrain()
     {
         if (brainTransform == null || CheckPlayerWhileEating())

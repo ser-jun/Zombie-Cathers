@@ -55,6 +55,7 @@ public class Player : MonoBehaviour
     public AudioClip brainTrowSound;
     public AudioClip bushSound;
     public AudioClip changeWeapon;
+    private bool isOnAirplane = false;
     #endregion
     private void Awake()
     {
@@ -86,8 +87,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-       
 
+        if (!isOnAirplane)
+        {
+            MovePlayer();
+        }
         MovePlayer();
         CheckPositionPlayer();
         DropObject();
@@ -101,17 +105,22 @@ public class Player : MonoBehaviour
     {
         HandleCamera();
     }
-   
+
     void HandleCamera()
     {
         borderX = Mathf.Lerp(cameraTransform.position.x, transform.position.x, cameraSpeed * Time.fixedDeltaTime);
         borderX = Mathf.Clamp(borderX, minPositionCamera, maxPositionCamera);
+
+        float borderY = Mathf.Lerp(cameraTransform.position.y, transform.position.y, cameraSpeed * Time.fixedDeltaTime);
+        borderY = Mathf.Clamp(borderY, -0.1f, 5.8f); 
+
         cameraTransform.position = new Vector3(
             borderX,
-            Mathf.Lerp(cameraTransform.position.y, transform.position.y, cameraSpeed * Time.fixedDeltaTime),
+            borderY,
             cameraTransform.position.z
         );
     }
+
     public void SetAimController(AimController aim)
     {
 
@@ -167,35 +176,42 @@ public class Player : MonoBehaviour
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
         float dir = Input.GetAxisRaw("Horizontal");
-        animator.SetBool("isMoving", Mathf.Abs(dir) > 0);
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        animator.SetBool("isMoving", Mathf.Abs(dir) > 0);
+        if (!isOnAirplane)
+        {
+            if (dir != 0)
+            {
+                Vector3 scale = transform.localScale;
+                scale.x = dir > 0 ? 1f : -1f;
+                transform.localScale = scale;
+
+                foreach (var weapon in weapons)
+                {
+                    if (weapon != null)
+                    {
+                        Vector3 weaponScale = weapon.transform.localScale;
+                        weapon.transform.localScale = new Vector3(
+                            Mathf.Abs(weaponScale.x) * scale.x,
+                            weaponScale.x,
+                            weaponScale.z
+                        );
+                    }
+                }
+            }
+
+            rb.velocity = new Vector2(dir * moveSpeed, rb.velocity.y);
+        }
+
+   
+        if (Input.GetButtonDown("Jump") && (isGrounded || isOnAirplane))
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
-
-        if (dir != 0)
-        {
-
-            Vector3 scale = transform.localScale;
-            scale.x = dir > 0 ? 1f : -1f;
-            transform.localScale = scale;
-            foreach (var weapon in weapons)
-            {
-                if (weapon != null)
-                {
-                    Vector3 weaponScale = weapon.transform.localScale;
-                    weapon.transform.localScale = new Vector3(
-                        Mathf.Abs(weaponScale.x) * scale.x,
-                        weaponScale.x,
-                        weaponScale.z
-                    );
-                }
-            }
-        }
-
-        rb.velocity = new Vector2(dir * moveSpeed, rb.velocity.y);
-      
+    }
+    public void SetIsOnAirplane(bool isAttached)
+    {
+        isOnAirplane = isAttached;
     }
     private void OnDrawGizmosSelected()
     {
