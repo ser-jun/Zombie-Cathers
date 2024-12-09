@@ -59,6 +59,7 @@ public class TileGeneration : MonoBehaviour
             {
                 SceneManager.LoadScene("Map");
                 exitGamePanel.SetActive(false);
+                Time.timeScale = 1f;
              
             });
             exitGameButton.onClick.AddListener(() => { Application.Quit(); });

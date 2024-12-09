@@ -38,7 +38,7 @@ public class CoinController : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-           // audioSource.PlayOneShot(tookCoin);
+
             PlaySound(tookCoin);
             Destroy(gameObject);
             GameData data = SaveManager.Instance.LoadData();

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class AimController : MonoBehaviour
 {
-    // Start is called before the first frame update
     public Transform aimTransform;
     public Transform playerTransform;
     public float maxDistance = 6f;

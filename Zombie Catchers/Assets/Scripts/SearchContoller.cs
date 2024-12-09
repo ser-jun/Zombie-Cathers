@@ -6,7 +6,7 @@ public class Searcher : MonoBehaviour
 {
     private float minYPosition = 100f;
     private float maxYPosition = 263f;
-    private float minXPosition = -15f;
+    private float minXPosition = 0f;
     private float maxXPosition = 640f;
 
     private float moveSpeed = 15f;
